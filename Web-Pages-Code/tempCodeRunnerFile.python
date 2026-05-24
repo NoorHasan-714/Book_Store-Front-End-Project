@@ -1,0 +1,265 @@
+import random
+import sys
+import time
+
+# ----------------------------
+# Basic constants
+# ----------------------------
+MAP_W, MAP_H = 40, 20
+ROOM_MAX_SIZE = 8
+ROOM_MIN_SIZE = 4
+MAX_ROOMS = 10
+
+# ----------------------------
+# Helper datatypes
+# ----------------------------
+class Pos:
+    def __init__(self, x, y): 
+        self.x, self.y = x, y
+    def __iter__(self): 
+        return iter((self.x, self.y))
+    def __eq__(self, other):
+        return self.x == other.x and self.y == other.y
+
+def clamp(n, a, b): 
+    return max(a, min(n, b))
+
+# ----------------------------
+# Tile and Map
+# ----------------------------
+class Tile:
+    def __init__(self, walkable, char):
+        self.walkable = walkable
+        self.char = char
+        self.visible = False
+        self.explored = False
+
+class GameMap:
+    def __init__(self, w, h):
+        self.w, self.h = w, h
+        self.tiles = [[Tile(False, '#') for _ in range(h)] for _ in range(w)]
+
+    def carve_room(self, x1, y1, x2, y2):
+        for x in range(x1, x2):
+            for y in range(y1, y2):
+                self.tiles[x][y] = Tile(True, '.')
+
+    def carve_h_tunnel(self, x1, x2, y):
+        for x in range(min(x1, x2), max(x1, x2) + 1):
+            self.tiles[x][y] = Tile(True, '.')
+
+    def carve_v_tunnel(self, y1, y2, x):
+        for y in range(min(y1, y2), max(y1, y2) + 1):
+            self.tiles[x][y] = Tile(True, '.')
+
+# ----------------------------
+# Entities
+# ----------------------------
+class Entity:
+    def __init__(self, x, y, char, name, hp=0, atk=0):
+        self.pos = Pos(x, y)
+        self.char = char
+        self.name = name
+        self.hp = hp
+        self.max_hp = hp
+        self.atk = atk
+        self.alive = True
+        self.inventory = []
+
+# ----------------------------
+# Game state
+# ----------------------------
+class Game:
+    def __init__(self):
+        self.map = GameMap(MAP_W, MAP_H)
+        self.player = Entity(0, 0, '@', "Player", 20, 3)
+        self.entities = [self.player]
+        self.turn = 0
+        self.rune_uses = 2
+        self.logs = []
+        self.last_pos = None
+
+    def log(self, msg): 
+        self.logs.append(msg)
+        if len(self.logs) > 6: 
+            self.logs.pop(0)
+
+# ----------------------------
+# Map generation
+# ----------------------------
+def make_map(game):
+    rooms = []
+    for r in range(MAX_ROOMS):
+        w = random.randint(ROOM_MIN_SIZE, ROOM_MAX_SIZE)
+        h = random.randint(ROOM_MIN_SIZE, ROOM_MAX_SIZE)
+        x = random.randint(1, MAP_W - w - 2)
+        y = random.randint(1, MAP_H - h - 2)
+        new_room = (x, y, x + w, y + h)
+
+        # Check overlap
+        failed = False
+        for other in rooms:
+            if (x <= other[2] and x + w >= other[0] and
+                y <= other[3] and y + h >= other[1]):
+                failed = True
+                break
+        if not failed:
+            game.map.carve_room(*new_room)
+            if rooms:
+                (prev_x, prev_y, prev_x2, prev_y2) = rooms[-1]
+                new_x, new_y = (x + w // 2, y + h // 2)
+                prev_cx, prev_cy = ((prev_x + prev_x2) // 2, (prev_y + prev_y2) // 2)
+                if random.randint(0, 1):
+                    game.map.carve_h_tunnel(prev_cx, new_x, prev_cy)
+                    game.map.carve_v_tunnel(prev_cy, new_y, new_x)
+                else:
+                    game.map.carve_v_tunnel(prev_cy, new_y, prev_cx)
+                    game.map.carve_h_tunnel(prev_cx, new_x, new_y)
+            rooms.append(new_room)
+    start_room = rooms[0]
+    game.player.pos = Pos(start_room[0] + 1, start_room[1] + 1)
+
+    # place monsters
+    for room in rooms[1:]:
+        x = random.randint(room[0] + 1, room[2] - 2)
+        y = random.randint(room[1] + 1, room[3] - 2)
+        monster = Entity(x, y, random.choice("gbS"), random.choice(["Goblin", "Bat", "Skeleton"]), 8, 2)
+        game.entities.append(monster)
+
+# ----------------------------
+# Rendering
+# ----------------------------
+def compute_fov(game):
+    for x in range(game.map.w):
+        for y in range(game.map.h):
+            game.map.tiles[x][y].visible = False
+    px, py = game.player.pos.x, game.player.pos.y
+    for x in range(max(0, px - 6), min(game.map.w, px + 7)):
+        for y in range(max(0, py - 6), min(game.map.h, py + 7)):
+            if (x - px) ** 2 + (y - py) ** 2 <= 36:
+                game.map.tiles[x][y].visible = True
+                game.map.tiles[x][y].explored = True
+
+def render(game):
+    compute_fov(game)
+    print("\033[H\033[J", end='')  # clear terminal (works on most)
+    for y in range(game.map.h):
+        row = ""
+        for x in range(game.map.w):
+            tile = game.map.tiles[x][y]
+            ch = ' '
+            if game.player.pos == (x, y):
+                ch = '@'
+            else:
+                for e in game.entities:
+                    if e.pos == (x, y) and e.alive and e is not game.player:
+                        ch = e.char
+                        break
+                else:
+                    if tile.visible:
+                        ch = tile.char
+                    elif tile.explored:
+                        ch = '.'
+            row += ch
+        print(row)
+    print(f"HP:{game.player.hp}/{game.player.max_hp}  ATK:{game.player.atk}  Turn:{game.turn}  Runes:{game.rune_uses}")
+    print("-" * 40)
+    for msg in game.logs[-6:]:
+        print(msg)
+    print("-" * 40)
+    print("Commands: WASD move, Q quit, U use rune (rewind)")
+
+# ----------------------------
+# Input
+# ----------------------------
+MOVE_KEYS = {
+    'w': (0, -1), 'a': (-1, 0), 's': (0, 1), 'd': (1, 0),
+    'k': (0, -1), 'h': (-1, 0), 'j': (0, 1), 'l': (1, 0)
+}
+
+def get_command():
+    cmd = input("> ").strip().lower()
+    return cmd
+
+# ----------------------------
+# Combat & movement
+# ----------------------------
+def attack(attacker, defender, game):
+    dmg = max(1, attacker.atk + random.randint(-1, 1))
+    defender.hp -= dmg
+    game.log(f"{attacker.name} hits {defender.name} for {dmg}!")
+    if defender.hp <= 0:
+        defender.alive = False
+        game.log(f"{defender.name} dies!")
+
+def move_entity(entity, dx, dy, game):
+    nx, ny = entity.pos.x + dx, entity.pos.y + dy
+    if 0 <= nx < game.map.w and 0 <= ny < game.map.h:
+        if game.map.tiles[nx][ny].walkable:
+            # Check for collision
+            for e in game.entities:
+                if e.alive and e.pos == (nx, ny) and e is not entity:
+                    if entity is game.player:
+                        attack(entity, e, game)
+                    return False
+            entity.pos = Pos(nx, ny)
+            return True
+    return False
+
+def monster_ai(monster, game):
+    if not monster.alive:
+        return
+    dx = clamp(game.player.pos.x - monster.pos.x, -1, 1)
+    dy = clamp(game.player.pos.y - monster.pos.y, -1, 1)
+    if abs(dx) + abs(dy) > 0:
+        move_entity(monster, dx, dy, game)
+
+# ----------------------------
+# Main loop
+# ----------------------------
+def main():
+    game = Game()
+    make_map(game)
+    game.log("Welcome to the Pocket Labyrinth!")
+
+    while True:
+        render(game)
+        cmd = get_command()
+        if cmd == 'q':
+            print("Goodbye!")
+            break
+
+        if cmd in MOVE_KEYS:
+            dx, dy = MOVE_KEYS[cmd]
+            game.last_pos = Pos(game.player.pos.x, game.player.pos.y)
+            moved = move_entity(game.player, dx, dy, game)
+            if moved:
+                game.turn += 1
+                for e in game.entities:
+                    if e is not game.player:
+                        monster_ai(e, game)
+
+        elif cmd == 'u':
+            if game.rune_uses > 0 and game.last_pos:
+                game.player.pos = game.last_pos
+                game.rune_uses -= 1
+                game.log("You used a rune to rewind time!")
+            else:
+                game.log("No runes left or no position to rewind to.")
+
+        else:
+            game.log("Unknown command!")
+
+        if game.player.hp <= 0:
+            render(game)
+            print("💀 You have perished in the labyrinth...")
+            break
+
+# ----------------------------
+# Entry point
+# ----------------------------
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("\nGame interrupted.")

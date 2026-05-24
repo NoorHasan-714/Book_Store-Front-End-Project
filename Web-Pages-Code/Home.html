@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Pakistan Book Store - Home</title>
+	<link rel="stylesheet" href="Home.css">
+	<script src="auth.js"></script>
+	<script>
+		// Check authentication on page load
+		document.addEventListener('DOMContentLoaded', function() {
+			if (!checkAuth()) {
+				return; // This will redirect to login page
+			}
+			
+			// Update UI with user info
+			const user = getCurrentUser();
+			if (user) {
+				// Update navigation menu: make sure the login button becomes a visible Logout button
+				const loginBtnTop = document.querySelector('.login-btn');
+				if (loginBtnTop) {
+					loginBtnTop.textContent = 'Logout';
+					loginBtnTop.style.display = 'inline-block';
+					loginBtnTop.classList.add('login-btn');
+					loginBtnTop.onclick = function(e) {
+						e.preventDefault();
+						logoutUser();
+					};
+				}
+
+				// Add click handlers to all navigation links
+				document.querySelectorAll('nav a:not(.login-btn)').forEach(link => {
+					const originalHref = link.getAttribute('href');
+					if (originalHref !== 'LoginPage.html' && originalHref !== 'Registration.html') {
+						link.onclick = function(e) {
+							if (!getCurrentUser()) {
+								e.preventDefault();
+								alert('Please login or register to access this page.');
+								window.location.href = 'LoginPage.html';
+							}
+						};
+					}
+				});
+			}
+		});
+	</script>
+</head>
+<body>
+	<nav class="navbar">
+		<ul>
+		<li><a href="Home.html" class="brand" style="text-decoration: none; text-align: center;">PK Book Store</a></li>
+		<li><a href="Home.html" class="active">Home</a></li>
+		<li><a href="Catalog.html" class="auth-required">Catalog</a></li>
+		<li><a href="Add Cart.html" class="auth-required">Add Cart</a></li>
+		<li><a href="OrderPayment.html" class="auth-required">Order Payment</a></li>
+		<li><a href="Profile.html" class="auth-required">Profile</a></li>
+		<li class="auth-nav-item">
+			<a href="LoginPage.html" class="login-btn" style="display: none;">Login</a>
+			<a href="Registration.html" class="register-btn" style="display: none;">Register</a>
+		</li>
+		</ul>
+	</nav>
+	<script>
+		// Function to update navigation based on auth status
+		function updateNavigation() {
+			const user = getCurrentUser();
+			const isLoggedIn = !!user;
+			
+			// Show/hide auth-required links
+			document.querySelectorAll('.auth-required').forEach(link => {
+				link.style.opacity = isLoggedIn ? '1' : '0.5';
+				link.style.pointerEvents = isLoggedIn ? 'auto' : 'none';
+			});
+			
+			// Update login/register buttons
+			const loginBtn = document.querySelector('.login-btn');
+			const registerBtn = document.querySelector('.register-btn');
+			
+			if (isLoggedIn) {
+				// Show Logout button when logged in
+				loginBtn.textContent = 'Logout';
+				loginBtn.style.display = 'inline-block';
+				loginBtn.onclick = function(e) { e.preventDefault(); logoutUser(); };
+				registerBtn.style.display = 'none';
+			} else {
+				// Hide login link on Home for guests; show Register instead
+				loginBtn.style.display = 'none';
+				registerBtn.style.display = 'inline-block';
+			}
+		}
+		
+		// Call updateNavigation when the page loads
+		document.addEventListener('DOMContentLoaded', updateNavigation);
+	</script>
+	<div class="main-content">
+		<h2 style="margin-top: 20px; color: #1a237e;font-family: 'Times New Roman', Times, serif;"><b>Welcome to Pakistan Book Store</b></h2>
+		<!-- Call-to-action: Join / Login -->
+		<!-- <div class="cta-join" style="text-align:center; margin:18px 0;">
+			<h3 style="color:#37474f; font-family: 'Times New Roman', Times, serif; margin-bottom:8px;">Join us to discover more</h3>
+			<a href="LoginPage.html" class="cta-login" style="display:inline-block; background:linear-gradient(90deg, #90caf9 70%, #b39ddb 100%); color:#1a237e; padding:10px 18px; border-radius:8px; text-decoration:none; font-weight:bold;">Login/ Create an account</a>
+		</div> -->
+		<div class="slider">
+					<div class="slides">
+						<img src="c1.jpeg" alt="Best Selling Urdu Books">
+						<img src="c2.jpg" alt="Shopify Book">
+						<img src="c3.jpg" alt="Book Cover 1">
+						<img src="c4.jpg" alt="Book Cover 2">
+						<img src="c5.jpg" alt="Book Cover 3">
+						<img src="c6.jpg" alt="Book Cover 3">
+						<img src="c7.jpg" alt="Karakoram Ka Taj Mehal">
+						<img src="c8.jpg" alt="Book Cover 4">
+						<img src="c9.jpg" alt="Book Cover 5">
+						<img src="c10.jpg" alt="Book Cover 6">
+						<img src="c11.jpg" alt="Book Cover 7">
+					</div>
+					<div class="slider-nav" style="text-align:center; margin-top:10px;"></div>
+		</div>
+		
+		<div class="featured-books">
+			<div class="book-card" onclick="toggleOverview(this)">
+				<img src="c11.jpg" alt="Peer-e-Kamil">
+				<div class="book-info">
+					<div class="book-title">Peer-e-Kamil</div>
+					<p>By Umera Ahmed</p>
+					<div class="book-overview">
+						A masterpiece of Urdu literature that follows the spiritual and emotional journey of its protagonists. This novel explores themes of faith, love, and self-discovery.
+					</div>
+				</div>
+			</div>
+			
+			<div class="book-card" onclick="toggleOverview(this)">
+				<img src="c12.jpg" alt="The Alchemist">
+				<div class="book-info">
+					<div class="book-title">The Alchemist</div>
+					<p>By Paulo Coelho</p>
+					<div class="book-overview">
+						A philosophical novel about a young Andalusian shepherd who yearns to travel in search of worldly treasure. His quest leads him to riches far different than he expected.
+					</div>
+				</div>
+			</div>
+			
+			<div class="book-card" onclick="toggleOverview(this)">
+				<img src="c13.jpg"Kulliyat-e-Iqbal">
+				<div class="book-info">
+					<div class="book-title">Kulliyat-e-Iqbal</div>
+					<p>By Allama Iqbal</p>
+					<div class="book-overview">
+						A comprehensive collection of Iqbal's Persian and Urdu poetry, featuring his most celebrated works including Bang-e-Dara, Bal-e-Jibril, and Zarb-e-Kalim.
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script>
+			function toggleOverview(card) {
+				const overview = card.querySelector('.book-overview');
+				if (overview.classList.contains('active')) {
+					overview.style.height = '0';
+					overview.classList.remove('active');
+				} else {
+					overview.style.height = overview.scrollHeight + 'px';
+					overview.classList.add('active');
+				}
+			}
+		</script>
+
+		<p style="font-size:1.1em; font-family: 'Times New Roman', Times, serif; color:#333; max-width:800px; text-align:center; margin: 30px auto;">
+			Discover a wide range of books from all genres. From contemporary English novels to classic Urdu literature, academic texts to children's books. Click on any book to learn more about it!</p>
+		
+		<div style="width:90vw; max-width:1200px; margin:20px auto;">
+			<h2 style="color:#1a237e; text-align:center; margin-bottom:30px; font-family:'Times New Roman', Times, serif;">Latest Articles & Reviews</h2>
+			
+			<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:50px; padding: 20px;">
+  <div class="article-card" style="background:white; padding:25px; border-radius:15px; box-shadow:0 4px 15px rgba(0,0,0,0.1); border: 2px solid #b39ddb;">
+    <h3 style="color:#1a237e; margin-bottom:15px; font-size: 1.3em;">New Release: "The Silent Patient" - A Modern Psychological Thriller</h3>
+    <p style="color:#333; line-height:1.6;">Alex Michaelides's debut novel has taken the literary world by storm. This psychological thriller masterfully combines elements of traditional mystery with contemporary psychological insight...</p>
+    <button class="read-more-btn" style="background:linear-gradient(90deg, #90caf9 70%, #b39ddb 100%); color:#1a237e; border:none; padding:10px 20px; border-radius:8px; margin-top:15px; cursor:pointer; font-weight:bold;">Read More</button>
+    <div class="article-content" style="display:none; margin-top: 15px;">
+      <p style="line-height:1.6; padding: 15px; background: #f8f8f8; border-radius: 8px;">The story follows a criminal psychotherapist's obsession with uncovering the truth behind a woman's apparent murder of her husband. With its clever plot twists and deep psychological insights, this book is a must-read for thriller enthusiasts.</p>
+    </div>
+  </div>
+  <div class="article-card" style="background:white; padding:25px; border-radius:15px; box-shadow:0 4px 15px rgba(0,0,0,0.1); border: 2px solid #b39ddb;">
+    <h3 style="color:#1a237e; margin-bottom:15px; font-size: 1.3em;">Exploring Modern Urdu Literature: "Aangan" by Khadija Mastoor</h3>
+    <p style="color:#333; line-height:1.6;">A classic of Urdu literature that continues to resonate with contemporary readers. This novel provides a unique perspective on the partition era through the eyes of its female protagonists...</p>
+    <button class="read-more-btn" style="background:linear-gradient(90deg, #90caf9 70%, #b39ddb 100%); color:#1a237e; border:none; padding:10px 20px; border-radius:8px; margin-top:15px; cursor:pointer; font-weight:bold;">Read More</button>
+    <div class="article-content" style="display:none; margin-top: 15px;">
+      <p style="line-height:1.6; padding: 15px; background: #f8f8f8; border-radius: 8px;">Set in pre-partition India, the novel masterfully weaves together the personal and political, creating a tapestry of human experiences during a pivotal moment in history. Its recent translation into English has brought this masterpiece to a wider audience.</p>
+    </div>
+  </div>
+  <div class="article-card" style="background:white; padding:25px; border-radius:15px; box-shadow:0 4px 15px rgba(0,0,0,0.1); border: 2px solid #b39ddb;">
+    <h3 style="color:#1a237e; margin-bottom:15px; font-size: 1.3em;">Monthly Spotlight: Best Children's Books of 2025</h3>
+    <p style="color:#333; line-height:1.6;">Discover our curated selection of the best children's books that combine entertainment with educational value. From picture books to young adult novels...</p>
+    <button class="read-more-btn" style="background:linear-gradient(90deg, #90caf9 70%, #b39ddb 100%); color:#1a237e; border:none; padding:10px 20px; border-radius:8px; margin-top:15px; cursor:pointer; font-weight:bold;">Read More</button>
+    <div class="article-content" style="display:none; margin-top: 15px;">
+      <p style="line-height:1.6; padding: 15px; background: #f8f8f8; border-radius: 8px;">This month's selection includes award-winning titles that address important topics like environmental awareness, cultural diversity, and emotional intelligence. These books not only entertain but also help young readers develop critical thinking skills.</p>
+    </div>
+  </div>
+</div>
+		</div>
+
+		<script>
+document.addEventListener('DOMContentLoaded', function() {
+  let activeButton = null;
+  let activeContent = null;
+  document.querySelectorAll('.read-more-btn').forEach(button => {
+    button.addEventListener('click', function() {
+      const card = this.closest('.article-card');
+      const content = card.querySelector('.article-content');
+      // If another card is open, close it
+      if (activeContent && activeContent !== content) {
+        activeContent.style.display = 'none';
+        activeButton.textContent = 'Read More';
+      }
+      // Toggle current card
+      if (content.style.display === 'none' || content.style.display === '') {
+        content.style.display = 'block';
+        this.textContent = 'Show Less';
+        activeButton = this;
+        activeContent = content;
+      } else {
+        content.style.display = 'none';
+        this.textContent = 'Read More';
+        activeButton = null;
+        activeContent = null;
+      }
+    });
+  });
+});
+		</script>
+	</div>
+	<footer>
+		&copy; 2025 Pakistan Book Store. All rights reserved. M.Noor Hasan
+	</footer>
+</body>
+</html>

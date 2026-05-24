@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Payment - Pakistan Book Store</title>
+    <link rel="stylesheet" href="OrderPayment.css">
+	<script src="orderpayment.js"></script>
+    <script src="auth.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        if (!checkAuth()) return;
+        const user = getCurrentUser();
+        if (user) {
+          document.querySelectorAll('.login-btn').forEach(el => { el.textContent = 'Logout'; el.onclick = function(e){ e.preventDefault(); logoutUser(); }; });
+        }
+      });
+    </script>
+</head>
+<body>
+    	<nav class="navbar">
+    	<ul>
+		<li><a href="Home.html" class="brand">PK Book Store</a></li>
+    	<li><a href="Home.html">Home</a></li>
+    	<li><a href="Catalog.html" class="auth-required">Catalog</a></li>
+    	<li><a href="Add Cart.html" class="active">Add Cart</a></li>
+    	<li><a href="OrderPayment.html" class="auth-required">Order Payment</a></li>
+    	<li><a href="Profile.html" class="auth-required">Profile</a></li>
+    	<li><a href="LoginPage.html" class="login-btn">Login</a></li>
+    	</ul>
+    </nav>
+	</div>
+
+		<main class="main-content">
+				<div class="payment-panel" style="max-width:900px;margin:24px auto;padding:16px;">
+						<h2>Order Payment</h2>
+						<div id="order-summary">
+								</div>
+						<div id="payment-actions" style="margin-top:16px;">
+								<button id="pay-now" style="padding:10px 16px;font-size:16px;">Pay Now</button>
+								<button id="edit-cart" style="padding:10px 12px;margin-left:8px;">Edit Cart</button>
+						</div>
+
+						<hr style="margin:20px 0;">
+
+						<div id="receipt" style="display:none;border:1px solid #ddd;padding:12px;background:#fff;">
+								</div>
+				</div>
+		</main>
+
+		<footer>
+				&copy; 2025 Pakistan Book Store. All rights reserved. M.Noor Hasan
+		</footer>
+
+		<script>
+function getQueryParam(name) {
+    const url = window.location.search;
+    const params = new URLSearchParams(url);
+    return params.get(name);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    if (!checkAuth()) return; // respect auth behavior
+
+    const orderId = getQueryParam('orderId');
+    const orderSummaryEl = document.getElementById('order-summary');
+    const receiptEl = document.getElementById('receipt');
+
+    function formatCurrency(n){ return 'Rs. ' + (parseFloat(n) || 0); }
+
+    if (orderId) {
+        // Show specific receipt for orderId
+        const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+        const order = orders.find(o => o.id === orderId);
+        if (order) {
+            let receiptHtml = `<h3>Receipt — ${order.id}</h3><div><em>${new Date(order.timestamp).toLocaleString()}</em></div>`;
+            receiptHtml += `<section style="margin-top:8px;"><h4>Buyer</h4><div>${order.buyer.username} — ${order.buyer.email}</div><div>${order.buyer.address}</div></section>`;
+            receiptHtml += `<section style="margin-top:8px;"><h4>Items</h4>`;
+            (order.items || []).forEach(it => {
+                const t = (parseFloat(it.price)||0) * (parseInt(it.quantity)||1);
+                receiptHtml += `<div style="display:flex;justify-content:space-between;border-bottom:1px dashed #eee;padding:6px 0;"><div>${it.title} × ${it.quantity}</div><div>${formatCurrency(t)}</div></div>`;
+            });
+            receiptHtml += `</section>`;
+            receiptHtml += `<section style="margin-top:8px;"><div>Subtotal: ${formatCurrency(order.subtotal)}</div><div>Delivery: ${formatCurrency(order.delivery)}</div><div style="font-weight:800;margin-top:6px;">Total Paid: ${formatCurrency(order.total)}</div></section>`;
+            receiptHtml += `<div style="margin-top:10px;font-size:12px;color:#666">Thank you for your purchase.</div>`;
+            receiptEl.innerHTML = receiptHtml;
+            receiptEl.style.display = 'block';
+            orderSummaryEl.style.display = 'none';
+            document.getElementById('payment-actions').style.display = 'none';
+        } else {
+            receiptEl.innerHTML = `<p style="color:#b71c1c;">Order not found. Please check your order history.</p>`;
+            receiptEl.style.display = 'block';
+            orderSummaryEl.style.display = 'none';
+            document.getElementById('payment-actions').style.display = 'none';
+        }
+        return;
+    }
+
+    const cart = JSON.parse(localStorage.getItem('bookCart') || '[]');
+    const buyer = JSON.parse(localStorage.getItem('buyerInfo') || 'null');
+
+    function renderOrder() {
+        if (!buyer || cart.length === 0) {
+            orderSummaryEl.innerHTML = '<p>No order found. Please add items to your cart first.</p>';
+            document.getElementById('pay-now').disabled = true;
+            return;
+        }
+        // Build buyer info block
+        const buyerHtml = `
+            <section style="margin-bottom:12px;">
+                <h3>Buyer Information</h3>
+                <div><strong>Username:</strong> ${buyer.username}</div>
+                <div><strong>Email:</strong> ${buyer.email}</div>
+                <div><strong>Address:</strong> ${buyer.address}</div>
+            </section>
+        `;
+        // Items
+        let itemsHtml = '<section><h3>Items</h3><div style="display:flex;flex-direction:column;gap:8px;">';
+        let subtotal = 0; let totalItems = 0;
+        cart.forEach(it => {
+            const itemTotal = (parseFloat(it.price) || 0) * (parseInt(it.quantity) || 1);
+            subtotal += itemTotal;
+            totalItems += parseInt(it.quantity) || 1;
+            itemsHtml += `
+                <div style="display:flex;gap:12px;align-items:center;border:1px solid #eee;padding:8px;">
+                    <img src="${it.image}" alt="${it.title}" style="width:60px;height:80px;object-fit:cover;">
+                    <div style="flex:1;">
+                        <div style="font-weight:600;">${it.title}</div>
+                        <div style="color:#666">Qty: ${it.quantity} &nbsp; Unit: ${formatCurrency(it.price)}</div>
+                    </div>
+                    <div style="font-weight:700">${formatCurrency(itemTotal)}</div>
+                </div>
+            `;
+        });
+        itemsHtml += '</div></section>';
+        const delivery = 100;
+        const total = subtotal + delivery;
+        const summaryHtml = `
+            <section style="margin-top:12px;">
+                <h3>Summary</h3>
+                <div>Items: ${totalItems}</div>
+                <div>Subtotal: ${formatCurrency(subtotal)}</div>
+                <div>Delivery: ${formatCurrency(delivery)}</div>
+                <div style="font-weight:800;margin-top:8px;">Total: ${formatCurrency(total)}</div>
+            </section>
+        `;
+        orderSummaryEl.innerHTML = buyerHtml + itemsHtml + summaryHtml;
+    }
+
+    renderOrder();
+
+    // Edit cart -> go back to Add Cart page (pre-payment default)
+    document.getElementById('edit-cart').addEventListener('click', function(){
+        window.location.href = 'Add Cart.html';
+    });
+
+    // Handle payment (simulated)
+    document.getElementById('pay-now').addEventListener('click', function(){
+        if (!buyer || cart.length === 0) {
+            alert('No order to process');
+            return;
+        }
+        // Simulate payment processing delay
+        this.disabled = true;
+        this.textContent = 'Processing...';
+        setTimeout(() => {
+            const timestamp = new Date().toISOString();
+            const orderId = 'ORD-' + Math.random().toString(36).substr(2,9).toUpperCase();
+            const delivery = 100;
+            const subtotal = cart.reduce((s,it) => s + (parseFloat(it.price)||0) * (parseInt(it.quantity)||1), 0);
+            const total = subtotal + delivery;
+            
+            // Create a proper order object with all the details
+            const completedOrder = { 
+                id: orderId, 
+                buyer: buyer, 
+                items: cart, 
+                subtotal: subtotal,
+                delivery: delivery, 
+                total: total, 
+                timestamp: timestamp 
+            };
+            
+            // Save to order history
+            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+            orders.push(completedOrder);
+            localStorage.setItem('orders', JSON.stringify(orders));
+            
+            // Also save to user's purchase history in auth.js system
+            if (typeof addToHistory === 'function') {
+                cart.forEach(item => {
+                    const purchaseEntry = {
+                        id: item.id,
+                        title: item.title,
+                        unitPrice: parseFloat(item.price),
+                        quantity: parseInt(item.quantity),
+                        total: parseFloat(item.price) * parseInt(item.quantity),
+                        purchasedAt: timestamp,
+                        buyer: buyer
+                    };
+                    // Add to user's history
+                    addToHistory('booksPurchased', purchaseEntry);
+                });
+            }
+            
+            // Clear cart and buyer info
+            localStorage.removeItem('bookCart');
+            localStorage.removeItem('buyerInfo');
+            
+            // Render receipt with all the details as requested
+            let receiptHtml = `<h3>Receipt — ${orderId}</h3><div><em>${new Date(timestamp).toLocaleString()}</em></div>`;
+            receiptHtml += `<section style="margin-top:8px;"><h4>Buyer</h4><div>${completedOrder.buyer.username} — ${completedOrder.buyer.email}</div><div>${completedOrder.buyer.address}</div></section>`;
+            receiptHtml += `<section style="margin-top:8px;"><h4>Items</h4>`;
+            completedOrder.items.forEach(it => {
+                const t = (parseFloat(it.price)||0) * (parseInt(it.quantity)||1);
+                receiptHtml += `<div style="display:flex;justify-content:space-between;border-bottom:1px dashed #eee;padding:6px 0;"><div>${it.title} × ${it.quantity}</div><div>${formatCurrency(t)}</div></div>`;
+            });
+            receiptHtml += `</section>`;
+            receiptHtml += `<section style="margin-top:8px;"><div>Subtotal: ${formatCurrency(completedOrder.subtotal)}</div><div>Delivery: ${formatCurrency(completedOrder.delivery)}</div><div style="font-weight:800;margin-top:6px;">Total Paid: ${formatCurrency(completedOrder.total)}</div></section>`;
+            receiptHtml += `<div style="margin-top:10px;font-size:12px;color:#666">Thank you for your purchase.</div>`;
+            receiptEl.innerHTML = receiptHtml;
+            receiptEl.style.display = 'block';
+            // Update UI
+            document.getElementById('pay-now').style.display = 'none';
+            // Activate the requested option:
+            document.getElementById('edit-cart').textContent = 'Go to Profile to check History';
+            document.getElementById('edit-cart').onclick = () => { window.location.href = 'Profile.html'; };
+        }, 900);
+    });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pakistan Book Store</title>
+  <link rel="stylesheet" href="Login.css">
+  <link rel="stylesheet" href="password-toggle.css">
+  <script src="password-toggle.js"></script>
+  <script src="auth.js"></script>
+</head>
+<body>
+  <script>
+    // If already logged in, redirect to Home
+    document.addEventListener('DOMContentLoaded', function() {
+      if (checkAuth()) {
+        // checkAuth will redirect logged-in users off the login/register pages
+        return;
+      }
+    });
+  </script>
+  <nav class="navbar">
+    <ul> 
+      <li><a href="Home.html" class="brand" style="text-decoration: none; text-align: center;">PK Book Store</a></li>
+    <li><a href="Home.html">Home</a></li>
+      
+    <li><a href="Catalog.html">Catalog</a></li>
+    <li><a href="Add Cart.html">Add Cart</a></li>
+    <!-- <li><a href="Registration.html">Registration</a></li> -->
+    <li><a href="Profile.html">Profile</a></li>
+    <li><a href="LoginPage.html" class="login-btn active">Login</a></li>
+    </ul>
+  </nav>
+  <div class="main-content" style="display: flex; justify-content: center; align-items: center; min-height: calc(100vh - 150px); padding: 15px;">
+    <div class="form-container" style="border: 2px solid #6B4CE6; border-radius: 20px; padding: 35px; box-shadow: 0 4px 20px rgba(107, 76, 230, 0.15); background: #fff; margin: 15px; width: 400px;">
+      <h2 style="color: #2E279D; text-align: left; margin-bottom: 30px; font-size: 26px; font-weight: bold;">Login Here</h2>
+      <form action="dashboard.html" method="post" style="width: 100%;">
+  <div style="margin-bottom: 20px;">
+    <input type="text" placeholder="Enter Username" name="username" required style="width:100%; padding:14px; border-radius:12px; border:1px solid #E8E8E8; font-size: 15px; box-sizing: border-box; background: #fff; outline: none;">
+  </div>
+  <div class="password-container" style="margin-bottom: 25px;">
+    <input type="password" placeholder="Enter Password" name="password" id="loginPassword" required style="width:100%; padding:14px; border-radius:12px; border:1px solid #E8E8E8; font-size: 15px; box-sizing: border-box; background: #fff; outline: none;">
+    <button type="button" class="password-toggle" id="toggleLoginPassword" onclick="togglePassword('loginPassword', 'toggleLoginPassword')" title="Show password" style="font-size: 18px; color: #6B4CE6; right: 12px;">👁️‍🗨️</button>
+  </div>
+  <button type="submit" style="width: 100%; padding: 14px; background: #4F46E5; color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; margin-bottom: 20px; transition: all 0.3s ease; margin-top: 10px;">Login</button>
+      </form>
+
+  <script>
+  document.querySelector('form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const username = this.username.value.trim();
+    const password = this.password.value;
+    
+    const validationResult = validateLogin(username, password);
+    if (!validationResult.success) {
+      alert(validationResult.message);
+      return;
+    }
+    
+    loginUser(username);
+    try { alert('Login successful. Welcome ' + username + '!'); } catch (e) {}
+    window.location.href = 'Home.html';
+  });
+  </script>
+      <p style="margin-top: 10px; text-align: center; font-size: 14px; color: #666;">New user? <a href="Registration.html" style="color: #4F46E5; font-weight: 600; text-decoration: none; transition: color 0.3s ease;">Register an account</a></p>
+    </div>
+  </div>
+ <footer>
+		&copy; 2025 Pakistan Book Store. All rights reserved. M.Noor Hasan
+	</footer>
+</body>
+</html>

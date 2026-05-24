@@ -1,0 +1,650 @@
+<!-- Profile Info Section 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Profile - Pakistan Book Store</title>
+<link rel="stylesheet" href="Profile.css">
+<script src="auth.js"></script>
+</head>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+if (!checkAuth()) return;
+const user = getCurrentUser();
+if (user) {
+document.querySelectorAll('.login-btn').forEach(el => { el.textContent = 'Logout'; el.onclick = function(e){ e.preventDefault(); logoutUser(); }; });
+		}
+	});
+</script>
+<body>
+	<nav class="navbar">
+	<ul>
+	<li><a href="Home.html" class="brand" style="text-decoration: none; text-align: center;">PK Book Store</a></li>
+	<li><a href="Home.html">Home</a></li>
+	<li><a href="Catalog.html" class="auth-required">Catalog</a></li>
+	<li><a href="Add Cart.html" class="auth-required">Add Cart</a></li>
+	<li><a href="OrderPayment.html" class="auth-required">Order Payment</a></li>
+	<li><a href="Profile.html" class="active">Profile</a></li>
+	<li><a href="LoginPage.html" class="login-btn">Login</a></li>
+	</ul>
+	</nav>
+<div class="main-content">
+	<div style="display:flex; justify-content:center; align-items:flex-start; width:100%;">  -->
+
+<!-- Profile Info Section 
+<div style="max-width:520px; width:100%; background:#fff; border-radius:16px; box-shadow:0 2px 8px rgba(0,0,0,0.10); border:2px solid #b39ddb; padding:32px 28px; margin: 0 auto;">
+	<div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:18px;">
+		<h2 style="color:#1a237e; margin:0;">User Profile</h2>
+		<div style="display:flex; gap:10px;">
+		<button onclick="handleDeleteAccount()" style="padding:8px 22px; background:#dc2626; color:#fff; border:none; border-radius:8px; font-size:1em; font-weight:bold; cursor:pointer; box-shadow:0 2px 8px rgba(220,38,38,0.10);">Delete Account</button>
+	</div>
+	</div>
+		<div style="margin-bottom:18px;">
+			<label style="font-weight:bold; color:#3949ab;">Username:</label>
+			<span style="margin-left:10px; color:#333;" id="profile-username"></span>
+		</div>
+		<div style="margin-bottom:18px;">
+			<label style="font-weight:bold; color:#3949ab;">User Gmail:</label>
+			<span style="margin-left:10px; color:#333;" id="profile-email"></span>
+			</div>
+			<div style="margin-bottom:18px;">
+			<label style="font-weight:bold; color:#3949ab;">Password:</label>
+			<span style="margin-left:10px; color:#333;" id="profile-password"></span>
+		</div>
+		<hr style="margin:24px 0; border:1px solid #b39ddb;">
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+	const user = getCurrentUser();
+	if (!user) return;
+	const userInfo = getUser(user.username);
+	if (!userInfo) return;
+	document.getElementById('profile-username').textContent = userInfo.username;
+	document.getElementById('profile-email').textContent = userInfo.email;
+	document.getElementById('profile-password').textContent = userInfo.password;
+});
+
+function handleDeleteAccount() {
+    const user = getCurrentUser();
+    if (!user) return;
+    
+    const confirmDelete = confirm(
+        "Are you sure you want to delete your account?\n\n" +
+        "⚠️ Warning:\n" +
+        "- This action cannot be undone\n" +
+        "- All your data and history will be permanently deleted\n" +
+        "- You won't be able to log in with this account again"
+    );
+    
+    if (confirmDelete) {
+        const result = deleteAccount(user.username);
+        if (result.success) {
+            alert('Your account has been successfully deleted.');
+            window.location.href = 'LoginPage.html';
+        } else {
+            alert('Error deleting account: ' + result.message);
+        }
+    }
+}
+</script>
+	<h3 style="color:#3949ab; margin-bottom:12px;">Sale & Purchase History</h3>
+		<div id="history-container">
+		<div style="margin-bottom:10px;">
+		<label style="font-weight:bold; color:#3949ab;">Books Purchased:</label>
+		<ul id="books-purchased" style="margin:8px 0 0 18px; color:#333;"></ul>
+		<div style="margin-top:6px; font-weight:bold;">Total Spent on Books: <span id="total-books">Rs. 0</span></div>
+	</div>
+		<div style="margin-bottom:10px;">
+			<label style="font-weight:bold; color:#3949ab;">Novels Purchased:</label>
+			<ul id="novels-purchased" style="margin:8px 0 0 18px; color:#333;"></ul>
+			<div style="margin-top:6px; font-weight:bold;">Total Spent on Novels: <span id="total-novels">Rs. 0</span></div>
+	</div>
+		<div style="margin-bottom:10px;">
+				<label style="font-weight:bold; color:#3949ab;">Books Sold:</label>
+				<ul id="books-sold" style="margin:8px 0 0 18px; color:#333;"></ul>
+				<div style="margin-top:6px; font-weight:bold;">Total Earned from Books: <span id="earned-books">Rs. 0</span></div>
+	</div>
+		<div style="margin-bottom:10px;">
+			<label style="font-weight:bold; color:#3949ab;">Novels Sold:</label>
+			<ul id="novels-sold" style="margin:8px 0 0 18px; color:#333;"></ul>
+			<div style="margin-top:6px; font-weight:bold;">Total Earned from Novels: <span id="earned-novels">Rs. 0</span></div>
+		</div>
+	</div>
+<script>
+	function updateHistory() {
+		const history = JSON.parse(sessionStorage.getItem('pkbookstore_user_history') || 'null');
+		if (!history) {
+		document.getElementById('history-container').style.display = 'none';
+		return;
+				}
+	document.getElementById('history-container').style.display = 'block';
+						
+		function updateList(items, elementId) {
+		const ul = document.getElementById(elementId);
+		ul.innerHTML = '';
+		let subtotal = 0;
+		items.forEach(item => {
+		const li = document.createElement('li');
+		// item may be a string (legacy) or an object
+	if (typeof item === 'string') {
+		li.textContent = item;
+	} else {
+		li.innerHTML = `${item.title} — Qty: ${item.quantity} — Unit: Rs. ${item.unitPrice} — Total: Rs. ${item.total}`;
+		subtotal += (item.total || ((item.unitPrice||0) * (item.quantity||0)));
+			}
+		ul.appendChild(li);
+		});
+		if (items.length === 0) {
+			const li = document.createElement('li');
+			li.textContent = 'No items';
+			li.style.fontStyle = 'italic';
+			ul.appendChild(li);
+			}
+		return subtotal;
+		}
+				
+				const booksSubtotal = updateList(history.booksPurchased || [], 'books-purchased');
+				const novelsSubtotal = updateList(history.novelsPurchased || [], 'novels-purchased');
+				const booksEarned = updateList(history.booksSold || [], 'books-sold');
+				const novelsEarned = updateList(history.novelsSold || [], 'novels-sold');
+
+				document.getElementById('total-books').textContent = 'Rs. ' + (booksSubtotal || 0);
+				document.getElementById('total-novels').textContent = 'Rs. ' + (novelsSubtotal || 0);
+				document.getElementById('earned-books').textContent = 'Rs. ' + (booksEarned || 0);
+				document.getElementById('earned-novels').textContent = 'Rs. ' + (novelsEarned || 0);
+			}
+					
+		// Update history when the page loads
+				document.addEventListener('DOMContentLoaded', function() {
+				updateHistory();
+		// Also load completed orders from localStorage (orders saved after payment)
+				loadLocalOrdersFromStorage();
+					});
+		// Append completed orders saved in localStorage into the purchase history
+				function loadLocalOrdersFromStorage() {
+				const user = getCurrentUser();
+				if (!user) return;
+				const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+				if (!orders || orders.length === 0) return;
+
+		// Helper to append an entry
+				function appendEntry(listId, item) {
+				const ul = document.getElementById(listId);
+				if (!ul) return;
+				const li = document.createElement('li');
+			li.innerHTML = `${item.title} — Qty: ${item.quantity} — Unit: Rs. ${item.unitPrice} — Total: Rs. ${item.total}`;
+		ul.appendChild(li);
+			}
+
+			let booksAdded = 0;
+			let novelsAdded = 0;
+			let booksTotal = 0;
+			let novelsTotal = 0;
+
+				orders.forEach(order => {
+				if (!order.buyer) return;
+		// Match by username or email
+			if (order.buyer.username !== user.username && order.buyer.email !== user.email) return;
+
+					(order.items || []).forEach(it => {
+					const entry = {
+					title: it.title || 'Untitled',
+					quantity: it.quantity || 1,
+					unitPrice: it.price || 0,
+					total: (parseFloat(it.price)||0) * (parseInt(it.quantity)||1)
+	};
+
+			const cat = (it.category || '').toLowerCase();
+		if (cat.includes('novel')) {
+			appendEntry('novels-purchased', entry);
+			novelsAdded += entry.quantity;
+			novelsTotal += entry.total;
+		} else {
+			appendEntry('books-purchased', entry);
+			booksAdded += entry.quantity;
+			booksTotal += entry.total;
+			}
+		});
+	});
+
+		// Update totals by adding to any existing totals displayed
+	const totalBooksEl = document.getElementById('total-books');
+	const totalNovelsEl = document.getElementById('total-novels');
+	if (totalBooksEl) {
+	const existing = parseFloat((totalBooksEl.textContent || 'Rs. 0').replace(/[^0-9.]/g, '')) || 0;
+	totalBooksEl.textContent = 'Rs. ' + (existing + booksTotal);
+		}
+	if (totalNovelsEl) {
+	const existing = parseFloat((totalNovelsEl.textContent || 'Rs. 0').replace(/[^0-9.]/g, '')) || 0;
+	totalNovelsEl.textContent = 'Rs. ' + (existing + novelsTotal);
+				}
+			}
+			</script>
+		</div>
+	</div>
+	</div>
+	<footer>
+		&copy; 2025 Pakistan Book Store. All rights reserved. M.Noor Hasan
+	</footer>
+</body>
+</html> -->
+
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Profile - Pakistan Book Store</title>
+	<link rel="stylesheet" href="Profile.css">
+	<script src="auth.js"></script>
+</head>
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
+		if (!checkAuth()) return;
+		const user = getCurrentUser();
+		if (user) {
+			document.querySelectorAll('.login-btn').forEach(el => { el.textContent = 'Logout'; el.onclick = function(e){ e.preventDefault(); logoutUser(); }; });
+		}
+	});
+</script>
+<body>
+		<nav class="navbar">
+		<ul>
+		<li><a href="Home.html" class="brand" style="text-decoration: none; text-align: center;">PK Book Store</a></li>
+		<li><a href="Home.html">Home</a></li>
+		<li><a href="Catalog.html" class="auth-required">Catalog</a></li>
+		<li><a href="Add Cart.html" class="auth-required">Add Cart</a></li>
+		<li><a href="OrderPayment.html" class="auth-required">Order Payment</a></li>
+		<li><a href="Profile.html" class="active">Profile</a></li>
+		<li><a href="LoginPage.html" class="login-btn">Login</a></li>
+		</ul>
+	</nav>
+	<div class="main-content">
+		<div style="display:flex; justify-content:center; align-items:flex-start; width:100%;">
+			<div style="max-width:520px; width:100%; background:#fff; border-radius:16px; box-shadow:0 2px 8px rgba(0,0,0,0.10); border:2px solid #b39ddb; padding:32px 28px; margin: 0 auto;">
+				<div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:18px;">
+					<h2 style="color:#1a237e; margin:0;">User Profile</h2>
+					<div style="display:flex; gap:10px;">
+						<button onclick="handleDeleteAccount()" style="padding:8px 22px; background:#dc2626; color:#fff; border:none; border-radius:8px; font-size:1em; font-weight:bold; cursor:pointer; box-shadow:0 2px 8px rgba(220,38,38,0.10);">Delete Account</button>
+					</div>
+				</div>
+				<div style="margin-bottom:18px;">
+					<label style="font-weight:bold; color:#3949ab;">Username:</label>
+					<span style="margin-left:10px; color:#333;" id="profile-username"></span>
+				</div>
+				<div style="margin-bottom:18px;">
+					<label style="font-weight:bold; color:#3949ab;">User Gmail:</label>
+					<span style="margin-left:10px; color:#333;" id="profile-email"></span>
+				</div>
+				<div style="margin-bottom:18px;">
+					<label style="font-weight:bold; color:#3949ab;">Password:</label>
+					<span style="margin-left:10px; color:#333;" id="profile-password"></span>
+				</div>
+				<hr style="margin:24px 0; border:1px solid #b39ddb;">
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+	const user = getCurrentUser();
+	if (!user) return;
+	const userInfo = getUser(user.username);
+	if (!userInfo) return;
+	document.getElementById('profile-username').textContent = userInfo.username;
+	document.getElementById('profile-email').textContent = userInfo.email;
+	document.getElementById('profile-password').textContent = userInfo.password;
+});
+
+function handleDeleteAccount() {
+    const user = getCurrentUser();
+    if (!user) return;
+    
+    const confirmDelete = confirm(
+        "Are you sure you want to delete your account?\n\n" +
+        "⚠️ Warning:\n" +
+        "- This action cannot be undone\n" +
+        "- All your data and history will be permanently deleted\n" +
+        "- You won't be able to log in with this account again"
+    );
+    
+    if (confirmDelete) {
+        const result = deleteAccount(user.username);
+        if (result.success) {
+            alert('Your account has been successfully deleted.');
+            window.location.href = 'LoginPage.html';
+        } else {
+            alert('Error deleting account: ' + result.message);
+        }
+    }
+}
+</script>
+				<h3 style="color:#3949ab; margin-bottom:12px;">Sale & Purchase History</h3>
+				<div id="history-container">
+							<div style="margin-bottom:10px;">
+								<label style="font-weight:bold; color:#3949ab;">Books Purchased:</label>
+								<ul id="books-purchased" style="margin:8px 0 0 18px; color:#333;"></ul>
+								<div style="margin-top:6px; font-weight:bold;">Total Spent on Books: <span id="total-books">Rs. 0</span></div>
+							</div>
+							<div style="margin-bottom:10px;">
+								<label style="font-weight:bold; color:#3949ab;">Novels Purchased:</label>
+								<ul id="novels-purchased" style="margin:8px 0 0 18px; color:#333;"></ul>
+								<div style="margin-top:6px; font-weight:bold;">Total Spent on Novels: <span id="total-novels">Rs. 0</span></div>
+							</div>
+							<div style="margin-bottom:10px;">
+								<label style="font-weight:bold; color:#3949ab;">Books Sold:</label>
+								<ul id="books-sold" style="margin:8px 0 0 18px; color:#333;"></ul>
+								<div style="margin-top:6px; font-weight:bold;">Total Earned from Books: <span id="earned-books">Rs. 0</span></div>
+							</div>
+							<div style="margin-bottom:10px;">
+								<label style="font-weight:bold; color:#3949ab;">Novels Sold:</label>
+								<ul id="novels-sold" style="margin:8px 0 0 18px; color:#333;"></ul>
+								<div style="margin-top:6px; font-weight:bold;">Total Earned from Novels: <span id="earned-novels">Rs. 0</span></div>
+							</div>
+				</div>
+				<script>
+					function updateHistory() {
+						const history = JSON.parse(sessionStorage.getItem('pkbookstore_user_history') || 'null');
+						if (!history) {
+							document.getElementById('history-container').style.display = 'none';
+							return;
+						}
+						document.getElementById('history-container').style.display = 'block';
+						
+						function updateList(items, elementId) {
+							const ul = document.getElementById(elementId);
+							ul.innerHTML = '';
+							let subtotal = 0;
+							items.forEach(item => {
+								const li = document.createElement('li');
+								// item may be a string (legacy) or an object
+								if (typeof item === 'string') {
+									li.textContent = item;
+								} else {
+									li.innerHTML = `${item.title} — Qty: ${item.quantity} — Unit: Rs. ${item.unitPrice} — Total: Rs. ${item.total}`;
+									subtotal += (item.total || ((item.unitPrice||0) * (item.quantity||0)));
+								}
+								ul.appendChild(li);
+							});
+							if (items.length === 0) {
+								const li = document.createElement('li');
+								li.textContent = 'No items';
+								li.style.fontStyle = 'italic';
+								ul.appendChild(li);
+							}
+							return subtotal;
+						}
+				
+						const booksSubtotal = updateList(history.booksPurchased || [], 'books-purchased');
+						const novelsSubtotal = updateList(history.novelsPurchased || [], 'novels-purchased');
+						const booksEarned = updateList(history.booksSold || [], 'books-sold');
+						const novelsEarned = updateList(history.novelsSold || [], 'novels-sold');
+
+						document.getElementById('total-books').textContent = 'Rs. ' + (booksSubtotal || 0);
+						document.getElementById('total-novels').textContent = 'Rs. ' + (novelsSubtotal || 0);
+						document.getElementById('earned-books').textContent = 'Rs. ' + (booksEarned || 0);
+						document.getElementById('earned-novels').textContent = 'Rs. ' + (novelsEarned || 0);
+					}
+					
+					// Update history when the page loads
+					document.addEventListener('DOMContentLoaded', function() {
+						updateHistory();
+						// Also load completed orders from localStorage (orders saved after payment)
+						loadLocalOrdersFromStorage();
+					});
+
+					// Append completed orders saved in localStorage into the purchase history
+					function loadLocalOrdersFromStorage() {
+						const user = getCurrentUser();
+						if (!user) return;
+						const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+						if (!orders || orders.length === 0) return;
+
+						// Helper to append an entry
+						function appendEntry(listId, item) {
+							const ul = document.getElementById(listId);
+							if (!ul) return;
+							const li = document.createElement('li');
+							li.innerHTML = `${item.title} — Qty: ${item.quantity} — Unit: Rs. ${item.unitPrice} — Total: Rs. ${item.total}`;
+							ul.appendChild(li);
+						}
+
+						let booksAdded = 0;
+						let novelsAdded = 0;
+						let booksTotal = 0;
+						let novelsTotal = 0;
+
+						orders.forEach(order => {
+							if (!order.buyer) return;
+							// Match by username or email
+							if (order.buyer.username !== user.username && order.buyer.email !== user.email) return;
+
+							(order.items || []).forEach(it => {
+								const entry = {
+									title: it.title || 'Untitled',
+									quantity: it.quantity || 1,
+									unitPrice: it.price || 0,
+									total: (parseFloat(it.price)||0) * (parseInt(it.quantity)||1)
+								};
+
+								const cat = (it.category || '').toLowerCase();
+								if (cat.includes('novel')) {
+									appendEntry('novels-purchased', entry);
+									novelsAdded += entry.quantity;
+									novelsTotal += entry.total;
+								} else {
+									appendEntry('books-purchased', entry);
+									booksAdded += entry.quantity;
+									booksTotal += entry.total;
+								}
+							});
+						});
+
+						// Update totals by adding to any existing totals displayed
+						const totalBooksEl = document.getElementById('total-books');
+						const totalNovelsEl = document.getElementById('total-novels');
+						if (totalBooksEl) {
+							const existing = parseFloat((totalBooksEl.textContent || 'Rs. 0').replace(/[^0-9.]/g, '')) || 0;
+							totalBooksEl.textContent = 'Rs. ' + (existing + booksTotal);
+						}
+						if (totalNovelsEl) {
+							const existing = parseFloat((totalNovelsEl.textContent || 'Rs. 0').replace(/[^0-9.]/g, '')) || 0;
+							totalNovelsEl.textContent = 'Rs. ' + (existing + novelsTotal);
+						}
+					}
+				</script>
+			</div>
+		</div>
+	</div>
+	<footer>
+		&copy; 2025 Pakistan Book Store. All rights reserved. M.Noor Hasan
+	</footer>
+</body>
+</html>
+
+	//////////////////////////////////////////////////////////////////////////////////////////
+			/*Order Paymet.html*/
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Payment - Pakistan Book Store</title>
+    <link rel="stylesheet" href="OrderPayment.css">
+    <script src="auth.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        if (!checkAuth()) return;
+        const user = getCurrentUser();
+        if (user) {
+          document.querySelectorAll('.login-btn').forEach(el => { el.textContent = 'Logout'; el.onclick = function(e){ e.preventDefault(); logoutUser(); }; });
+        }
+      });
+    </script>
+</head>
+<body>
+    	<nav class="navbar">
+    	<ul>
+    	<li><a href="Home.html" class="brand" style="text-decoration: none; text-align: center;">PK Book Store</a></li>
+    	<li><a href="Home.html">Home</a></li>
+    	<li><a href="Catalog.html" class="auth-required">Catalog</a></li>
+    	<li><a href="Add Cart.html" class="active">Add Cart</a></li>
+    	<li><a href="OrderPayment.html" class="auth-required">Order Payment</a></li>
+    	<li><a href="Profile.html" class="auth-required">Profile</a></li>
+    	<li><a href="LoginPage.html" class="login-btn">Login</a></li>
+    	</ul>
+    </nav>
+	</div>
+
+		<main class="main-content">
+				<div class="payment-panel" style="max-width:900px;margin:24px auto;padding:16px;">
+						<h2>Order Payment</h2>
+						<div id="order-summary">
+								<!-- Order details will be rendered here -->
+						</div>
+						<div id="payment-actions" style="margin-top:16px;">
+								<button id="pay-now" style="padding:10px 16px;font-size:16px;">Pay Now</button>
+								<button id="edit-cart" style="padding:10px 12px;margin-left:8px;">Edit Cart</button>
+						</div>
+
+						<hr style="margin:20px 0;">
+
+						<div id="receipt" style="display:none;border:1px solid #ddd;padding:12px;background:#fff;">
+								<!-- Printable receipt will appear here after payment -->
+						</div>
+				</div>
+		</main>
+
+		<footer>
+				&copy; 2025 Pakistan Book Store. All rights reserved. M.Noor Hasan
+		</footer>
+
+		<script>
+			document.addEventListener('DOMContentLoaded', function() {
+				if (!checkAuth()) return; // respect auth behavior
+
+				const cart = JSON.parse(localStorage.getItem('bookCart') || '[]');
+				const buyer = JSON.parse(localStorage.getItem('buyerInfo') || 'null');
+
+				const orderSummaryEl = document.getElementById('order-summary');
+				const receiptEl = document.getElementById('receipt');
+
+				function formatCurrency(n){ return 'Rs. ' + (parseFloat(n) || 0); }
+
+				function renderOrder() {
+					if (!buyer || cart.length === 0) {
+						orderSummaryEl.innerHTML = '<p>No order found. Please add items to your cart first.</p>';
+						document.getElementById('pay-now').disabled = true;
+						return;
+					}
+
+					// Build buyer info block
+					const buyerHtml = `
+						<section style="margin-bottom:12px;">
+							<h3>Buyer Information</h3>
+							<div><strong>Username:</strong> ${buyer.username}</div>
+							<div><strong>Email:</strong> ${buyer.email}</div>
+							<div><strong>Address:</strong> ${buyer.address}</div>
+						</section>
+					`;
+
+					// Items
+					let itemsHtml = '<section><h3>Items</h3><div style="display:flex;flex-direction:column;gap:8px;">';
+					let subtotal = 0; let totalItems = 0;
+					cart.forEach(it => {
+						const itemTotal = (parseFloat(it.price) || 0) * (parseInt(it.quantity) || 1);
+						subtotal += itemTotal;
+						totalItems += parseInt(it.quantity) || 1;
+						itemsHtml += `
+							<div style="display:flex;gap:12px;align-items:center;border:1px solid #eee;padding:8px;">
+								<img src="${it.image}" alt="${it.title}" style="width:60px;height:80px;object-fit:cover;">
+								<div style="flex:1;">
+									<div style="font-weight:600;">${it.title}</div>
+									<div style="color:#666">Qty: ${it.quantity} &nbsp; Unit: ${formatCurrency(it.price)}</div>
+								</div>
+								<div style="font-weight:700">${formatCurrency(itemTotal)}</div>
+							</div>
+						`;
+					});
+					itemsHtml += '</div></section>';
+
+					const delivery = 100;
+					const total = subtotal + delivery;
+
+					const summaryHtml = `
+						<section style="margin-top:12px;">
+							<h3>Summary</h3>
+							<div>Items: ${totalItems}</div>
+							<div>Subtotal: ${formatCurrency(subtotal)}</div>
+							<div>Delivery: ${formatCurrency(delivery)}</div>
+							<div style="font-weight:800;margin-top:8px;">Total: ${formatCurrency(total)}</div>
+						</section>
+					`;
+
+					orderSummaryEl.innerHTML = buyerHtml + itemsHtml + summaryHtml;
+				}
+
+				renderOrder();
+
+				// Edit cart -> go back to Add Cart page
+				document.getElementById('edit-cart').addEventListener('click', function(){
+					window.location.href = 'Add Cart.html';
+				});
+
+				// Handle payment (simulated)
+				document.getElementById('pay-now').addEventListener('click', function(){
+					if (!buyer || cart.length === 0) {
+						alert('No order to process');
+						return;
+					}
+
+					// Simulate payment processing delay
+					this.disabled = true;
+					this.textContent = 'Processing...';
+
+					setTimeout(() => {
+						const timestamp = new Date().toISOString();
+						const orderId = 'ORD-' + Math.random().toString(36).substr(2,9).toUpperCase();
+						const delivery = 100;
+						const subtotal = cart.reduce((s,it) => s + (parseFloat(it.price)||0) * (parseInt(it.quantity)||1), 0);
+						const total = subtotal + delivery;
+
+						const completedOrder = { id: orderId, buyer: buyer, items: cart, subtotal, delivery, total, timestamp };
+
+						// Save to order history
+						const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+						orders.push(completedOrder);
+						localStorage.setItem('orders', JSON.stringify(orders));
+
+						// Clear cart and buyer info
+						localStorage.removeItem('bookCart');
+						localStorage.removeItem('buyerInfo');
+
+						// Render receipt
+						let receiptHtml = `<h3>Receipt — ${orderId}</h3><div><em>${new Date(timestamp).toLocaleString()}</em></div>`;
+						receiptHtml += `<section style="margin-top:8px;"><h4>Buyer</h4><div>${completedOrder.buyer.username} — ${completedOrder.buyer.email}</div><div>${completedOrder.buyer.address}</div></section>`;
+						receiptHtml += `<section style="margin-top:8px;"><h4>Items</h4>`;
+						completedOrder.items.forEach(it => {
+							const t = (parseFloat(it.price)||0) * (parseInt(it.quantity)||1);
+							receiptHtml += `<div style="display:flex;justify-content:space-between;border-bottom:1px dashed #eee;padding:6px 0;"><div>${it.title} × ${it.quantity}</div><div>${formatCurrency(t)}</div></div>`;
+						});
+						receiptHtml += `</section>`;
+						receiptHtml += `<section style="margin-top:8px;"><div>Subtotal: ${formatCurrency(completedOrder.subtotal)}</div><div>Delivery: ${formatCurrency(completedOrder.delivery)}</div><div style="font-weight:800;margin-top:6px;">Total Paid: ${formatCurrency(completedOrder.total)}</div></section>`;
+
+						receiptHtml += `<div style="margin-top:10px;font-size:12px;color:#666">Thank you for your purchase.</div>`;
+
+						receiptEl.innerHTML = receiptHtml;
+						receiptEl.style.display = 'block';
+
+						// Update UI
+						document.getElementById('pay-now').style.display = 'none';
+						document.getElementById('edit-cart').textContent = 'Back to Home';
+						document.getElementById('edit-cart').onclick = () => { window.location.href = 'Home.html'; };
+
+					}, 900);
+				});
+			});
+		</script>
+</body>
+</html>
+

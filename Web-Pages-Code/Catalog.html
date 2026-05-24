@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Catalog - Pakistan Book Store</title>
+  <link rel="stylesheet" href="Catalog.css">
+  <style>
+    /* Remove Qty UI from catalog cards */
+    .add-to-cart .qty-input,
+    .add-to-cart label { display: none !important; }
+    /* Hide price display (remove pricing from catalog view) */
+    .add-to-cart .price-tag,
+    .add-to-cart .unit-price { display: none !important; }
+  </style>
+  <script src="auth.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Protect page: redirect to login if not authenticated
+      if (!checkAuth()) return;
+
+      // Update nav buttons
+      const user = getCurrentUser();
+      if (user) {
+        document.querySelectorAll('.login-btn').forEach(el => { el.textContent = 'Logout'; el.onclick = function(e){ e.preventDefault(); logoutUser(); }; });
+      }
+    });
+  </script>
+</head>
+<body>
+    	<nav class="navbar">
+    	<ul>
+       <li><a href="Home.html" class="brand" style="text-decoration: none; text-align: center;">PK Book Store</a></li>
+    <li><a href="Home.html">Home</a></li>
+  <li><a href="Catalog.html" class="active" style="box-shadow:none;">Catalog</a></li>
+    <li><a href="Add Cart.html" class="auth-required">Add Cart</a></li>
+    <li><a href="OrderPayment.html">Order Payment</a></li>
+    <li><a href="Profile.html" class="auth-required">Profile</a></li>
+    <li><a href="LoginPage.html" class="login-btn">Login</a></li>
+    </nav>
+	<div class="main-content">
+  <!-- Urdu Books/Novels Slider -->
+  <div class="slider">
+    <div class="slides">
+      <img src="c1.jpeg" alt="Best Selling Urdu Books">
+      <img src="c2.jpg" alt="Shopify Book">
+      <img src="c3.jpg" alt="Book Cover 1">
+      <img src="c4.jpg" alt="Book Cover 2">
+      <img src="c5.jpg">
+      <img src="c6.jpg" alt="Book Cover 3">
+      <img src="c14.jpg" alt="Karakoram Ka Taj Mehal">
+      <img src="c8.jpg" alt="Book Cover 4">
+      <img src="c9.jpg" alt="Book Cover 5">
+      <img src="c10.jpg" alt="Book Cover 6">
+      <img src="c11.jpg" alt="Book Cover 7">
+    </div>
+    <div class="slider-nav" style="text-align:center; margin-top:10px;"></div>
+  </div>
+
+  <!-- Urdu Books/Novels Cards -->
+  <div class="featured-books" style="margin-top:40px; display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:32px;"></div>
+  <div class="featured-books" style="margin-top:40px; display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:32px;">
+    <!-- Card 1: Ya Dil Mera -->
+    <div class="book-card">
+      <img src="c6.jpg" alt="Ya Dil Mera">
+      <div class="book-info">
+        <div class="book-title">Ya Dil Mera</div>
+        <p><strong>Overview:</strong> A psychological thriller novel by Farhat Ishtiaq, exploring the complexities of love, trauma, and healing through its deeply layered characters.</p>
+        <p><strong>Review:</strong> The novel stands out for its suspenseful plot and emotional depth, keeping readers engaged till the very end.</p>
+        <button class="article-toggle" style="background:#b39ddb; color:#fff; border:none; border-radius:8px; padding:8px 16px; cursor:pointer; margin-top:10px;">Show Article</button>
+        <div class="add-to-cart" style="margin-top:12px; display:flex; gap:8px; align-items:center;">
+          <span class="price-tag" style="font-weight:bold; color:#3949ab;">Rs. <span class="unit-price">850</span></span>
+          <label style="font-size:0.9em; color:#333;">Qty</label>
+          <input type="number" class="qty-input" value="1" min="1" style="width:64px; padding:6px; border-radius:6px; border:1px solid #ccc;" />
+          <button class="add-cart-btn" style="background:linear-gradient(90deg,#b39ddb 70%,#90caf9 100%); color:#1a237e; border:none; border-radius:18px; padding:8px 14px; font-weight:bold; cursor:pointer;">Add to Cart</button>
+        </div>
+        <div class="article-content" style="display:none; margin-top: 15px; background: #f8f8f8; border-radius: 8px; padding: 15px;">
+          <h4>Article: The Psychological Layers of Ya Dil Mera</h4>
+          <p>Ya Dil Mera delves into the impact of childhood trauma and the journey towards emotional recovery, making it a unique addition to Urdu literature.</p>
+        </div>
+      </div>
+    </div>
+      <!-- Card 2: Bastika Sooraj -->
+      <div class="book-card">
+        <img src="c5.jpg" alt="Bastika Sooraj">
+        <div class="book-info">
+          <div class="book-title">Bastika Sooraj</div>
+          <p><strong>Overview:</strong> Bastika Sooraj is a celebrated Urdu novel that explores the journey of self-discovery, resilience, and hope against the backdrop of social and emotional challenges. The story follows the protagonist's quest for meaning and light in the face of adversity.</p>
+          <p><strong>Review:</strong> Readers praise Bastika Sooraj for its compelling narrative, emotional depth, and inspiring message. The novel stands out for its realistic portrayal of life's struggles and the triumph of the human spirit.</p>
+          <button class="article-toggle" style="background:#b39ddb; color:#fff; border:none; border-radius:8px; padding:8px 16px; cursor:pointer; margin-top:10px;">Show Article</button>
+          <div class="add-to-cart" style="margin-top:12px; display:flex; gap:8px; align-items:center;">
+            <span class="price-tag" style="font-weight:bold; color:#3949ab;">Rs. <span class="unit-price">430</span></span>
+            <label style="font-size:0.9em; color:#333;">Qty</label>
+            <input type="number" class="qty-input" value="1" min="1" style="width:64px; padding:6px; border-radius:6px; border:1px solid #ccc;" />
+            <button class="add-cart-btn" style="background:linear-gradient(90deg,#b39ddb 70%,#90caf9 100%); color:#1a237e; border:none; border-radius:18px; padding:8px 14px; font-weight:bold; cursor:pointer;">Add to Cart</button>
+          </div>
+          <div class="add-to-cart" style="margin-top:12px; display:flex; gap:8px; align-items:center;">
+            <span class="price-tag" style="font-weight:bold; color:#3949ab;">Rs. <span class="unit-price">720</span></span>
+            <label style="font-size:0.9em; color:#333;">Qty</label>
+            <input type="number" class="qty-input" value="1" min="1" style="width:64px; padding:6px; border-radius:6px; border:1px solid #ccc;" />
+            <button class="add-cart-btn" style="background:linear-gradient(90deg,#b39ddb 70%,#90caf9 100%); color:#1a237e; border:none; border-radius:18px; padding:8px 14px; font-weight:bold; cursor:pointer;">Add to Cart</button>
+          </div>
+          <div class="article-content" style="display:none; margin-top: 15px; background: #f8f8f8; border-radius: 8px; padding: 15px;">
+            <h4>Article: Illuminating Life with Bastika Sooraj</h4>
+            <p>Bastika Sooraj delves into the complexities of human emotions and the search for hope in difficult times. Through its rich storytelling and relatable characters, the novel encourages readers to embrace resilience and find light even in the darkest moments. Its impact on contemporary Urdu literature is significant, inspiring many to reflect on their own journeys and the power of perseverance.</p>
+          </div>
+        </div>
+      </div>
+      <!-- Card 3: Namal -->
+      <div class="book-card">
+        <img src="b3.png" alt="Namal">
+        <div class="book-info">
+          <div class="book-title">Namal</div>
+          <p><strong>Overview:</strong> Namal by Nimra Ahmed is a complex thriller weaving together themes of justice, revenge, and family secrets, set against a backdrop of suspense and intrigue.</p>
+          <p><strong>Review:</strong> The novel is praised for its intricate plot and multidimensional characters, keeping readers hooked from start to finish.</p>
+          <button class="article-toggle" style="background:#b39ddb; color:#fff; border:none; border-radius:8px; padding:8px 16px; cursor:pointer; margin-top:10px;">Show Article</button>
+          <div class="add-to-cart" style="margin-top:12px; display:flex; gap:8px; align-items:center;">
+            <span class="price-tag" style="font-weight:bold; color:#3949ab;">Rs. <span class="unit-price">520</span></span>
+            <label style="font-size:0.9em; color:#333;">Qty</label>
+            <input type="number" class="qty-input" value="1" min="1" style="width:64px; padding:6px; border-radius:6px; border:1px solid #ccc;" />
+            <button class="add-cart-btn" style="background:linear-gradient(90deg,#b39ddb 70%,#90caf9 100%); color:#1a237e; border:none; border-radius:18px; padding:8px 14px; font-weight:bold; cursor:pointer;">Add to Cart</button>
+          </div>
+          <div class="add-to-cart" style="margin-top:12px; display:flex; gap:8px; align-items:center;">
+            <span class="price-tag" style="font-weight:bold; color:#3949ab;">Rs. <span class="unit-price">990</span></span>
+            <label style="font-size:0.9em; color:#333;">Qty</label>
+            <input type="number" class="qty-input" value="1" min="1" style="width:64px; padding:6px; border-radius:6px; border:1px solid #ccc;" />
+            <button class="add-cart-btn" style="background:linear-gradient(90deg,#b39ddb 70%,#90caf9 100%); color:#1a237e; border:none; border-radius:18px; padding:8px 14px; font-weight:bold; cursor:pointer;">Add to Cart</button>
+          </div>
+          <div class="article-content" style="display:none; margin-top: 15px; background: #f8f8f8; border-radius: 8px; padding: 15px;">
+            <h4>Article: The Intricacies of Namal</h4>
+            <p>Namal explores the fine line between justice and revenge, challenging readers to question morality and the consequences of choices.</p>
+          </div>
+        </div>
+      </div>
+      <!-- Card 4: Alif -->
+      <div class="book-card">
+        <img src="b4.jpg" alt="Alif">
+        <div class="book-info">
+          <div class="book-title">Alif</div>
+          <p><strong>Overview:</strong> Alif by Umera Ahmed is a spiritual journey of self-discovery, faith, and the search for meaning, told through the lives of its compelling characters.</p>
+          <p><strong>Review:</strong> The novel is celebrated for its profound message and emotional depth, resonating with readers seeking purpose and connection.</p>
+          <button class="article-toggle" style="background:#b39ddb; color:#fff; border:none; border-radius:8px; padding:8px 16px; cursor:pointer; margin-top:10px;">Show Article</button>
+          <div class="add-to-cart" style="margin-top:12px; display:flex; gap:8px; align-items:center;">
+            <span class="price-tag" style="font-weight:bold; color:#3949ab;">Rs. <span class="unit-price">600</span></span>
+            <label style="font-size:0.9em; color:#333;">Qty</label>
+            <input type="number" class="qty-input" value="1" min="1" style="width:64px; padding:6px; border-radius:6px; border:1px solid #ccc;" />
+            <button class="add-cart-btn" style="background:linear-gradient(90deg,#b39ddb 70%,#90caf9 100%); color:#1a237e; border:none; border-radius:18px; padding:8px 14px; font-weight:bold; cursor:pointer;">Add to Cart</button>
+          </div>
+          <div class="add-to-cart" style="margin-top:12px; display:flex; gap:8px; align-items:center;">
+            <span class="price-tag" style="font-weight:bold; color:#3949ab;">Rs. <span class="unit-price">650</span></span>
+            <label style="font-size:0.9em; color:#333;">Qty</label>
+            <input type="number" class="qty-input" value="1" min="1" style="width:64px; padding:6px; border-radius:6px; border:1px solid #ccc;" />
+            <button class="add-cart-btn" style="background:linear-gradient(90deg,#b39ddb 70%,#90caf9 100%); color:#1a237e; border:none; border-radius:18px; padding:8px 14px; font-weight:bold; cursor:pointer;">Add to Cart</button>
+          </div>
+          <div class="article-content" style="display:none; margin-top: 15px; background: #f8f8f8; border-radius: 8px; padding: 15px;">
+            <h4>Article: Alif—A Spiritual Awakening</h4>
+            <p>Alif inspires readers to reflect on their relationship with the Creator and the importance of inner transformation.</p>
+          </div>
+        </div>
+      </div>
+      <!-- Card 5: Ishq Aatish -->
+      <div class="book-card">
+        <img src="b5.jpg" alt="Ishq Aatish">
+        <div class="book-info">
+          <div class="book-title">Ishq Aatish</div>
+          <p><strong>Overview:</strong> Ishq Aatish by Maryam Shah is a passionate tale of love, sacrifice, and the trials faced by lovers in a world full of obstacles.</p>
+          <p><strong>Review:</strong> The novel captivates with its intense emotions and dramatic twists, making it a favorite among romance enthusiasts.</p>
+          <button class="article-toggle" style="background:#b39ddb; color:#fff; border:none; border-radius:8px; padding:8px 16px; cursor:pointer; margin-top:10px;">Show Article</button>
+          <div class="add-to-cart" style="margin-top:12px; display:flex; gap:8px; align-items:center;">
+            <span class="price-tag" style="font-weight:bold; color:#3949ab;">Rs. <span class="unit-price">700</span></span>
+            <label style="font-size:0.9em; color:#333;">Qty</label>
+            <input type="number" class="qty-input" value="1" min="1" style="width:64px; padding:6px; border-radius:6px; border:1px solid #ccc;" />
+            <button class="add-cart-btn" style="background:linear-gradient(90deg,#b39ddb 70%,#90caf9 100%); color:#1a237e; border:none; border-radius:18px; padding:8px 14px; font-weight:bold; cursor:pointer;">Add to Cart</button>
+          </div>
+          <div class="article-content" style="display:none; margin-top: 15px; background: #f8f8f8; border-radius: 8px; padding: 15px;">
+            <h4>Article: The Fire of Love in Ishq Aatish</h4>
+            <p>Ishq Aatish explores the transformative power of love and the resilience required to overcome adversity.</p>
+          </div>
+        </div>
+      </div>
+      <!-- Card 6: Jadoo Nagri -->
+      <div class="book-card">
+        <img src="b6.jpg" alt="Jadoo Nagri">
+        <div class="book-info">
+          <div class="book-title">Jadoo Nagri</div>
+          <p><strong>Overview:</strong> Jadoo Nagri by Ibn-e-Safi is a classic detective novel set in a mysterious world of crime, magic, and suspense.</p>
+          <p><strong>Review:</strong> The book is admired for its clever plot, witty dialogues, and unforgettable characters, making it a timeless piece of Urdu fiction.</p>
+          <button class="article-toggle" style="background:#b39ddb; color:#fff; border:none; border-radius:8px; padding:8px 16px; cursor:pointer; margin-top:10px;">Show Article</button>
+          <div class="article-content" style="display:none; margin-top: 15px; background: #f8f8f8; border-radius: 8px; padding: 15px;">
+            <h4>Article: The Mystery of Jadoo Nagri</h4>
+            <p>Jadoo Nagri transports readers to a world where reality and fantasy blend, offering thrilling adventures and mind-bending puzzles.</p>
+          </div>
+        </div>
+      </div>
+      <!-- Card 7: Wajbaat E Ishq -->
+      <div class="book-card">
+        <img src="b7.jpeg" alt="Wajbaat E Ishq">
+        <div class="book-info">
+          <div class="book-title">Wajbaat E Ishq</div>
+          <p><strong>Overview:</strong> Wajbaat E Ishq by Maryam Shah is a moving story of love, longing, and the emotional struggles faced by its protagonists.</p>
+          <p><strong>Review:</strong> The novel is lauded for its heartfelt narrative and relatable characters, resonating with anyone who has experienced the complexities of love.</p>
+          <button class="article-toggle" style="background:#b39ddb; color:#fff; border:none; border-radius:8px; padding:8px 16px; cursor:pointer; margin-top:10px;">Show Article</button>
+          <div class="article-content" style="display:none; margin-top: 15px; background: #f8f8f8; border-radius: 8px; padding: 15px;">
+            <h4>Article: The Emotions of Wajbaat E Ishq</h4>
+            <p>Wajbaat E Ishq delves into the depths of human emotion, exploring the pain and beauty of love in all its forms.</p>
+          </div>
+        </div>
+      </div>
+      <!-- Card 8: La Hasil -->
+      <div class="book-card">
+        <img src="b8.jpg" alt="La Hasil">
+        <div class="book-info">
+          <div class="book-title">La Hasil</div>
+          <p><strong>Overview:</strong> La Hasil by Umera Ahmed is a thought-provoking novel about the search for true happiness and the consequences of choices made in pursuit of worldly desires.</p>
+          <p><strong>Review:</strong> The book is appreciated for its powerful message and realistic portrayal of life's struggles, encouraging readers to seek fulfillment beyond material gains.</p>
+          <button class="article-toggle" style="background:#b39ddb; color:#fff; border:none; border-radius:8px; padding:8px 16px; cursor:pointer; margin-top:10px;">Show Article</button>
+          <div class="article-content" style="display:none; margin-top: 15px; background: #f8f8f8; border-radius: 8px; padding: 15px;">
+            <h4>Article: The Lessons of La Hasil</h4>
+            <p>La Hasil encourages readers to reflect on their priorities and the true meaning of success, making it a timeless work of Urdu literature.</p>
+          </div>
+        </div>
+      </div>
+    <!-- Card 9: Khud Sy Khuda Tk -->
+    <div class="book-card">
+      <img src="c4.jpg" alt="Khud Sy Khuda Tk">
+      <div class="book-info">
+        <div class="book-title">Khud Sy Khuda Tk</div>
+        <p><strong>Overview:</strong> A spiritual and motivational novel by Ayesha Masood, guiding readers on a journey from self-awareness to divine connection.</p>
+        <p><strong>Review:</strong> The book is praised for its uplifting message and practical advice, inspiring readers to seek inner peace and spiritual growth.</p>
+        <button class="article-toggle" style="background:#b39ddb; color:#fff; border:none; border-radius:8px; padding:8px 16px; cursor:pointer; margin-top:10px;">Show Article</button>
+        <div class="add-to-cart" style="margin-top:12px; display:flex; gap:8px; align-items:center;">
+          <span class="price-tag" style="font-weight:bold; color:#3949ab;">Rs. <span class="unit-price">680</span></span>
+          <label style="font-size:0.9em; color:#333;">Qty</label>
+          <input type="number" class="qty-input" value="1" min="1" style="width:64px; padding:6px; border-radius:6px; border:1px solid #ccc;" />
+          <button class="add-cart-btn" style="background:linear-gradient(90deg,#b39ddb 70%,#90caf9 100%); color:#1a237e; border:none; border-radius:18px; padding:8px 14px; font-weight:bold; cursor:pointer;">Add to Cart</button>
+        </div>
+        <div class="add-to-cart" style="margin-top:12px; display:flex; gap:8px; align-items:center;">
+          <span class="price-tag" style="font-weight:bold; color:#3949ab;">Rs. <span class="unit-price">480</span></span>
+          <label style="font-size:0.9em; color:#333;">Qty</label>
+          <input type="number" class="qty-input" value="1" min="1" style="width:64px; padding:6px; border-radius:6px; border:1px solid #ccc;" />
+          <button class="add-cart-btn" style="background:linear-gradient(90deg,#b39ddb 70%,#90caf9 100%); color:#1a237e; border:none; border-radius:18px; padding:8px 14px; font-weight:bold; cursor:pointer;">Add to Cart</button>
+        </div>
+        <div class="article-content" style="display:none; margin-top: 15px; background: #f8f8f8; border-radius: 8px; padding: 15px;">
+          <h4>Article: The Spiritual Journey in Khud Sy Khuda Tk</h4>
+          <p>This novel encourages readers to reflect on their lives and strive for a deeper connection with the Creator, blending storytelling with spiritual wisdom.</p>
+        </div>
+      </div>
+    </div>
+    <!-- Card 10: Sulphite -->
+    <div class="book-card">
+      <img src="c3.jpg" alt="Sulphite">
+      <div class="book-info">
+        <div class="book-title">Sulphite</div>
+        <p><strong>Overview:</strong> Nimra Ahmed's novel explores the themes of fate, choices, and the mysteries of life through a compelling narrative and memorable characters.</p>
+        <p><strong>Review:</strong> The story is engaging and thought-provoking, with twists that keep the reader guessing and reflecting on their own journey.</p>
+        <button class="article-toggle" style="background:#b39ddb; color:#fff; border:none; border-radius:8px; padding:8px 16px; cursor:pointer; margin-top:10px;">Show Article</button>
+        <div class="add-to-cart" style="margin-top:12px; display:flex; gap:8px; align-items:center;">
+          <span class="price-tag" style="font-weight:bold; color:#3949ab;">Rs. <span class="unit-price">750</span></span>
+          <label style="font-size:0.9em; color:#333;">Qty</label>
+          <input type="number" class="qty-input" value="1" min="1" style="width:64px; padding:6px; border-radius:6px; border:1px solid #ccc;" />
+          <button class="add-cart-btn" style="background:linear-gradient(90deg,#b39ddb 70%,#90caf9 100%); color:#1a237e; border:none; border-radius:18px; padding:8px 14px; font-weight:bold; cursor:pointer;">Add to Cart</button>
+        </div>
+        <div class="add-to-cart" style="margin-top:12px; display:flex; gap:8px; align-items:center;">
+          <span class="price-tag" style="font-weight:bold; color:#3949ab;">Rs. <span class="unit-price">560</span></span>
+          <label style="font-size:0.9em; color:#333;">Qty</label>
+          <input type="number" class="qty-input" value="1" min="1" style="width:64px; padding:6px; border-radius:6px; border:1px solid #ccc;" />
+          <button class="add-cart-btn" style="background:linear-gradient(90deg,#b39ddb 70%,#90caf9 100%); color:#1a237e; border:none; border-radius:18px; padding:8px 14px; font-weight:bold; cursor:pointer;">Add to Cart</button>
+        </div>
+        <div class="article-content" style="display:none; margin-top: 15px; background: #f8f8f8; border-radius: 8px; padding: 15px;">
+          <h4>Article: Fate and Free Will in Sal Fainate</h4>
+          <p>Sal Fainate invites readers to ponder the balance between destiny and personal choice, making it a standout work in contemporary Urdu fiction.</p>
+        </div>
+      </div>
+    </div>
+    <!-- Card 11: Parizad -->
+    <div class="book-card">
+      <img src="c8.jpg" alt="Parizad">
+      <div class="book-info">
+        <div class="book-title">Pari Zaad</div>
+        <p><strong>Overview:</strong> Written by Hashim Nadeem, Parizad is the story of a sensitive soul navigating a harsh world, touching on themes of identity, acceptance, and hope.</p>
+        <p><strong>Review:</strong> The novel is celebrated for its poetic language and emotional resonance, making Parizad a beloved character in Urdu literature.</p>
+        <button class="article-toggle" style="background:#b39ddb; color:#fff; border:none; border-radius:8px; padding:8px 16px; cursor:pointer; margin-top:10px;">Show Article</button>
+        <div class="add-to-cart" style="margin-top:12px; display:flex; gap:8px; align-items:center;">
+          <span class="price-tag" style="font-weight:bold; color:#3949ab;">Rs. <span class="unit-price">400</span></span>
+          <label style="font-size:0.9em; color:#333;">Qty</label>
+          <input type="number" class="qty-input" value="1" min="1" style="width:64px; padding:6px; border-radius:6px; border:1px solid #ccc;" />
+          <button class="add-cart-btn" style="background:linear-gradient(90deg,#b39ddb 70%,#90caf9 100%); color:#1a237e; border:none; border-radius:18px; padding:8px 14px; font-weight:bold; cursor:pointer;">Add to Cart</button>
+        </div>
+        <div class="article-content" style="display:none; margin-top: 15px; background: #f8f8f8; border-radius: 8px; padding: 15px;">
+          <h4>Article: Parizad—A Journey of Self-Acceptance</h4>
+          <p>Parizad's journey inspires readers to embrace their uniqueness and find hope even in adversity, making it a timeless tale of resilience.</p>
+        </div>
+      </div>
+    </div>
+    <!-- Card 12 -->
+    <div class="book-card">
+      <img src="c11.jpg" alt="Peer-e-Kamil">
+      <div class="book-info">
+        <div class="book-title">Peer-e-Kamil</div>
+        <p><strong>Overview:</strong> A masterpiece of Urdu literature that follows the spiritual and emotional journey of its protagonists. This novel explores themes of faith, love, and self-discovery.</p>
+        <p><strong>Review:</strong> Umera Ahmed's writing is deeply moving and thought-provoking. The characters are well-developed and the story is both inspiring and heart-wrenching.</p>
+          <button class="article-toggle" style="background:#b39ddb; color:#fff; border:none; border-radius:8px; padding:8px 16px; cursor:pointer; margin-top:10px;">Show Article</button>
+          <!-- Add to cart UI -->
+          <div class="add-to-cart" style="margin-top:12px; display:flex; gap:8px; align-items:center;">
+            <span class="price-tag" style="font-weight:bold; color:#3949ab;">Rs. <span class="unit-price">650</span></span>
+            <label style="font-size:0.9em; color:#333;">Qty</label>
+            <input type="number" class="qty-input" value="1" min="1" style="width:64px; padding:6px; border-radius:6px; border:1px solid #ccc;" />
+            <button class="add-cart-btn" style="background:linear-gradient(90deg,#b39ddb 70%,#90caf9 100%); color:#1a237e; border:none; border-radius:18px; padding:8px 14px; font-weight:bold; cursor:pointer;">Add to Cart</button>
+          </div>
+        <div class="article-content" style="display:none; margin-top: 15px; background: #f8f8f8; border-radius: 8px; padding: 15px;">
+          <h4>Article: The Impact of Peer-e-Kamil on Modern Urdu Literature</h4>
+          <p>Peer-e-Kamil has inspired a new generation of readers and writers in Pakistan. Its exploration of faith and personal growth continues to resonate with audiences today.</p>
+        </div>
+      </div>
+    </div>
+    <!-- Card 13 -->
+    <div class="book-card">
+      <img src="c12.jpg" alt="The Alchemist">
+      <div class="book-info">
+        <div class="book-title">The Alchemist</div>
+        <p><strong>Overview:</strong> A philosophical novel about a young Andalusian shepherd who yearns to travel in search of worldly treasure. His quest leads him to riches far different than he expected.</p>
+        <p><strong>Review:</strong> Paulo Coelho's classic is a tale of dreams, destiny, and self-discovery. The narrative is simple yet profound, making it a favorite among readers worldwide.</p>
+        <button class="article-toggle" style="background:#b39ddb; color:#fff; border:none; border-radius:8px; padding:8px 16px; cursor:pointer; margin-top:10px;">Show Article</button>
+        <div class="add-to-cart" style="margin-top:12px; display:flex; gap:8px; align-items:center;">
+          <span class="price-tag" style="font-weight:bold; color:#3949ab;">Rs. <span class="unit-price">820</span></span>
+          <label style="font-size:0.9em; color:#333;">Qty</label>
+          <input type="number" class="qty-input" value="1" min="1" style="width:64px; padding:6px; border-radius:6px; border:1px solid #ccc;" />
+          <button class="add-cart-btn" style="background:linear-gradient(90deg,#b39ddb 70%,#90caf9 100%); color:#1a237e; border:none; border-radius:18px; padding:8px 14px; font-weight:bold; cursor:pointer;">Add to Cart</button>
+        </div>
+        <div class="article-content" style="display:none; margin-top: 15px; background: #f8f8f8; border-radius: 8px; padding: 15px;">
+          <h4>Article: The Universal Lessons of The Alchemist</h4>
+          <p>The Alchemist teaches us to listen to our hearts and pursue our dreams. Its message of hope and perseverance has made it a global phenomenon.</p>
+        </div>
+      </div>
+    </div>
+    <!-- Card 14 -->
+    <div class="book-card">
+      <img src="c13.jpg" alt="Kulliyat-e-Iqbal">
+      <div class="book-info">
+        <div class="book-title">Kulliyat-e-Iqbal</div>
+        <p><strong>Overview:</strong> A comprehensive collection of Iqbal's Persian and Urdu poetry, featuring his most celebrated works including Bang-e-Dara, Bal-e-Jibril, and Zarb-e-Kalim.</p>
+        <p><strong>Review:</strong> Iqbal's poetry is rich in philosophical thought and national spirit. His verses continue to inspire and motivate generations.</p>
+        <button class="article-toggle" style="background:#b39ddb; color:#fff; border:none; border-radius:8px; padding:8px 16px; cursor:pointer; margin-top:10px;">Show Article</button>
+        <div class="article-content" style="display:none; margin-top: 15px; background: #f8f8f8; border-radius: 8px; padding: 15px;">
+          <h4>Article: Iqbal's Vision for the Youth</h4>
+          <p>Kulliyat-e-Iqbal is not just poetry, but a call to action for the youth of the nation. His words encourage self-realization and service to humanity.</p>
+        </div>
+      </div>
+    </div>
+    <!-- Card 15 -->
+    <div class="book-card">
+      <img src="c14.jpg" alt="Karakoram Ka Taj Mehal">
+      <div class="book-info">
+        <div class="book-title">Karakoram Ka Taj Mehal</div>
+        <p><strong>Overview:</strong> An adventurous tale set in the majestic Karakoram mountains, blending history, culture, and suspense.</p>
+        <p><strong>Review:</strong> The book offers a vivid portrayal of the region and its people, making it a must-read for lovers of travel and history.</p>
+        <button class="article-toggle" style="background:#b39ddb; color:#fff; border:none; border-radius:8px; padding:8px 16px; cursor:pointer; margin-top:10px;">Show Article</button>
+        <div class="article-content" style="display:none; margin-top: 15px; background: #f8f8f8; border-radius: 8px; padding: 15px;">
+          <h4>Article: Exploring the Karakoram Through Literature</h4>
+          <p>This novel brings the beauty and mystery of the Karakoram to life, inspiring readers to explore Pakistan's natural wonders.</p>
+        </div>
+      </div>
+    </div>
+    <!-- Card 16 -->
+    <div class="book-card">
+      <img src="c15.jpg" alt="Janant Kay Pattay">
+      <div class="book-info">
+        <div class="book-title">Jannat Kay Pattay</div>
+        <p><strong>Overview:</strong> A popular Urdu novel that explores themes of love, sacrifice, and faith in the face of adversity.</p>
+        <p><strong>Review:</strong> Nimra Ahmed's storytelling is captivating, with relatable characters and a gripping plot.</p>
+        <button class="article-toggle" style="background:#b39ddb; color:#fff; border:none; border-radius:8px; padding:8px 16px; cursor:pointer; margin-top:10px;">Show Article</button>
+        <div class="article-content" style="display:none; margin-top: 15px; background: #f8f8f8; border-radius: 8px; padding: 15px;">
+          <h4>Article: The Enduring Appeal of Jannat Kay Pattay</h4>
+          <p>This novel has touched the hearts of many, offering hope and inspiration through its powerful narrative.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slider interactivity (copied from Home.html) -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+  // Individual card article toggle logic
+  document.querySelectorAll('.article-toggle').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      const card = btn.closest('.book-card');
+      const content = card.querySelector('.article-content');
+      // Close any other open article in other cards
+      document.querySelectorAll('.article-content').forEach(function(other) {
+        if (other !== content) {
+          other.style.display = 'none';
+          const otherBtn = other.parentElement.querySelector('.article-toggle');
+          if (otherBtn) otherBtn.textContent = 'Show Article';
+        }
+      });
+      // Toggle current card
+      if (content.style.display === 'none' || content.style.display === '') {
+        content.style.display = 'block';
+        btn.textContent = 'Hide Article';
+      } else {
+        content.style.display = 'none';
+        btn.textContent = 'Show Article';
+      }
+    });
+  });
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Price map by title (fallback if not provided inline)
+  const priceMap = {
+    'Ya Dil Mera': 850,
+    'Bastika Sooraj': 720,
+    'Namal': 990,
+    'Alif': 650,
+    'Ishq Aatish': 480,
+    'Jadoo Nagri': 560,
+    'Wajbaat E Ishq': 430,
+    'La Hasil': 520,
+    'Khud Sy Khuda Tk': 600,
+    'Sulphite': 700,
+    'Pari Zaad': 680,
+    'Peer-e-Kamil': 650,
+    'The Alchemist': 750,
+    'Kulliyat-e-Iqbal': 400,
+    'Karakoram Ka Taj Mehal': 820,
+    'Jannat Kay Pattay': 610
+  };
+
+  document.querySelectorAll('.book-card').forEach(function(card, idx) {
+    const titleEl = card.querySelector('.book-title');
+    if (!titleEl) return;
+    const title = titleEl.textContent.trim();
+    const unitPriceEl = card.querySelector('.unit-price');
+    const unitPrice = unitPriceEl ? parseFloat(unitPriceEl.textContent) : (priceMap[title] || 500);
+
+  // attach id attribute to card for uniqueness
+  const itemId = 'book-' + idx + '-' + title.replace(/\s+/g,'-').toLowerCase();
+
+    // Remove duplicate .add-to-cart nodes if there are more than one
+    const addToCartNodes = Array.from(card.querySelectorAll('.add-to-cart'));
+    if (addToCartNodes.length > 1) {
+      // keep the first, remove the rest
+      addToCartNodes.slice(1).forEach(n => n.remove());
+    }
+    // Ensure we have a single add-to-cart button to bind
+    let addBtn = card.querySelector('.add-cart-btn');
+    if (!addBtn) {
+      const container = document.createElement('div');
+      container.className = 'add-to-cart';
+      container.style = 'margin-top:12px; display:flex; gap:8px; align-items:center;';
+      container.innerHTML = `<span class="price-tag" style="font-weight:bold; color:#3949ab;">Rs. <span class="unit-price">${unitPrice}</span></span>
+        <button class="add-cart-btn" style="background:linear-gradient(90deg,#b39ddb 70%,#90caf9 100%); color:#1a237e; border:none; border-radius:18px; padding:8px 14px; font-weight:bold; cursor:pointer;">Add to Cart</button>`;
+      card.querySelector('.book-info').appendChild(container);
+      addBtn = card.querySelector('.add-cart-btn');
+    }
+    if (addBtn) {
+      // replace the node to remove previous listeners, then re-attach the add-to-cart handler
+      const newBtn = addBtn.cloneNode(true);
+      addBtn.parentNode.replaceChild(newBtn, addBtn);
+      // Add handler that saves item to cart and redirects
+      newBtn.addEventListener('click', function() {
+        const container = newBtn.closest('.add-to-cart');
+        // Ensure qty input exists in the container (if site original didn't include)
+        let qtyInput = container.querySelector('.qty-input');
+        if (!qtyInput) {
+          qtyInput = document.createElement('input');
+          qtyInput.type = 'number';
+          qtyInput.className = 'qty-input';
+          qtyInput.value = 1;
+          qtyInput.min = 1;
+          qtyInput.style = 'width:64px; padding:6px; border-radius:6px; border:1px solid #ccc;';
+          container.insertBefore(qtyInput, newBtn);
+        }
+        const priceEl = container.querySelector('.unit-price');
+        const bookCard = container.closest('.book-card');
+        const titleEl = bookCard.querySelector('.book-title');
+        const imageEl = bookCard.querySelector('img');
+
+        // Determine category: prefer a .book-category element, then data-category on card, else fallback to 'Book'
+        let category = 'Book';
+        const catEl = bookCard.querySelector('.book-category');
+        if (catEl) category = catEl.textContent.trim();
+        else if (bookCard.dataset && bookCard.dataset.category) category = bookCard.dataset.category;
+
+        const item = {
+          id: itemId,
+          title: titleEl.textContent,
+          price: parseFloat(priceEl.textContent),
+          quantity: parseInt(qtyInput.value) || 1,
+          image: imageEl.src,
+          category: category
+        };
+        
+        // Show confirmation
+        alert(`${item.title} added to cart!`);
+
+        // Save cart item to localStorage (merge quantities if same id)
+        let cart = JSON.parse(localStorage.getItem('bookCart') || '[]');
+        const existingIndex = cart.findIndex(ci => ci.id === item.id);
+        if (existingIndex > -1) {
+          cart[existingIndex].quantity = (parseInt(cart[existingIndex].quantity) || 0) + item.quantity;
+        } else {
+          cart.push(item);
+        }
+        localStorage.setItem('bookCart', JSON.stringify(cart));
+
+        window.location.href = 'Add Cart.html';
+      });
+    }
+  });
+});
+</script>
+	<footer>
+		&copy; 2025 Pakistan Book Store. All rights reserved. M.Noor Hasan
+	</footer>
+</body>
+</html>

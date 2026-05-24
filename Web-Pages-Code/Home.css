@@ -1,0 +1,218 @@
+		body { margin: 0; font-family: Arial, sans-serif; background: #f5f5f5; }
+		.navbar {
+			background: linear-gradient(90deg, #90caf9 70%, #b39ddb 100%);
+			box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+			width: 100vw;
+			position: fixed;
+			top: 0;
+			left: 0;
+			z-index: 100;
+		}
+
+.auth-required {
+    transition: opacity 0.3s ease;
+    position: relative;
+}
+
+.auth-required[style*="pointer-events: none"] {
+    cursor: not-allowed;
+}
+
+.auth-required[style*="pointer-events: none"]:hover::after {
+    content: 'Please login first';
+    position: absolute;
+    background: #1a237e;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    bottom: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    z-index: 1000;
+}
+
+.register-btn {
+    color: #4F46E5;
+    text-decoration: none;
+    margin-left: 10px;
+    padding: 5px 15px;
+    border: 2px solid #4F46E5;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.register-btn:hover {
+    background: #4F46E5;
+    color: white;
+}
+		.navbar ul {
+			list-style-type: none;
+			margin: 0;
+			padding: 0;
+			display: flex;
+			align-items: center;
+		}
+		.navbar li {
+			flex: 1;
+		}
+		.navbar a {
+		display: block;
+		color: #fff;
+		text-align: center;
+		padding: 16px 0;
+		text-decoration: none;
+		font-weight: 500;
+		transition: background 0.2s;
+		/* box-shadow removed */
+		}
+		/* .navbar a.active removed for undo */
+		.navbar .brand:hover {
+		box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+		border: 2px solid #3949ab;
+		transition: box-shadow 0.2s, border 0.2s;
+		/* Explicitly prevent expansion */
+		border-radius: 24px !important;
+		padding: 8px 14px !important;
+		}
+		.navbar a:not(.brand):hover {
+			background-color: #3949ab;
+			border-radius: 999px;
+			box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+			border: 2px solid #b39ddb;
+			padding: 8px 28px;
+		}
+		.navbar .brand {
+			font-size: 1.3em;
+			font-weight: bold;
+			letter-spacing: 1px;
+			color: #1a237e;
+			background: linear-gradient(90deg, #90caf9 70%, #b39ddb 100%);
+			border-radius: 24px;
+			padding: 8px 14px;
+			margin-left: 16px;
+			box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+			border: 2px solid #b39ddb;
+			flex: 2;
+			text-align: left;
+		}
+		.navbar a.login-btn {
+	/* pill / tablet-like logout/login button */
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 120px;       /* wider so it looks like a capsule */
+	padding: 10px 30px;     /* taller and wider touch target */
+	border-radius: 999px;   /* full pill shape */
+	background: linear-gradient(90deg, #b39ddb 70%, #90caf9 100%);
+	color: #1a237e !important;
+	font-weight: 700;
+	font-size: 1.12em;
+	letter-spacing: 0.4px;
+	border: 2px solid #b39ddb;
+	box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+	margin-right: 18px;
+	text-align: center;
+	transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+	}
+.navbar a.login-btn:hover {
+  background: #3949ab;
+  color: #fff;
+}
+		.main-content {
+			margin-top: 80px;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			min-height: 80vh;
+		}
+		.slider {
+			width: 90vw;
+			max-width: 1200px;
+			height: 400px;
+			overflow: hidden;
+			position: relative;
+			margin: 40px auto 20px auto;
+			border-radius: 12px;
+			box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+			background: #fff;
+		}
+		.slides {
+			display: flex;
+			width: calc(400px * 8);
+				animation: slide 18s linear infinite;
+		}
+		.slides img {
+			width: 400px;
+			height: 380px;
+			object-fit: cover;
+			margin-right: 20px;
+			border-radius: 8px;
+		}
+		@keyframes slide {
+			0% { transform: translateX(0); }
+			12.5% { transform: translateX(0); }
+			25% { transform: translateX(-420px); }
+			37.5% { transform: translateX(-840px); }
+			50% { transform: translateX(-1260px); }
+			62.5% { transform: translateX(-1680px); }
+			75% { transform: translateX(-2100px); }
+			87.5% { transform: translateX(-2520px); }
+			100% { transform: translateX(0); }
+		}
+		.featured-books {
+			width: 90vw;
+			max-width: 1200px;
+			margin: 40px auto;
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+			gap: 20px;
+			padding: 20px;
+		}
+		.book-card {
+			background: white;
+			border-radius: 12px;
+			padding: 15px;
+			box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+			transition: transform 0.3s ease;
+			cursor: pointer;
+		}
+		.book-card:hover {
+			transform: translateY(-5px);
+		}
+		.book-card img {
+			width: 100%;
+			height: 300px;
+			object-fit: cover;
+			border-radius: 8px;
+		}
+		.book-info {
+			margin-top: 15px;
+		}
+		.book-title {
+			font-size: 1.2em;
+			color: #1a237e;
+			margin-bottom: 8px;
+		}
+		.book-overview {
+			height: 0;
+			overflow: hidden;
+			transition: height 0.3s ease;
+		}
+		.book-overview.active {
+			height: auto;
+			padding: 15px 0;
+		}
+		footer {
+	font-family: 'Times New Roman', Times, serif;
+	background: linear-gradient(90deg, #90caf9 70%, #b39ddb 100%);
+	color: #1a237e;
+	text-align: center;
+	padding: 10px 0 6px 0;
+	position: relative;
+	bottom: 0;
+	width: 100vw;
+	font-size: 1em;
+	letter-spacing: 1px;
+		}

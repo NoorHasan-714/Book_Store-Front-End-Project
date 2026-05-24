@@ -1,0 +1,160 @@
+body { margin: 0; font-family: Arial, sans-serif; background: #f5f5f5; }
+		.navbar {
+			background: linear-gradient(90deg, #90caf9 70%, #b39ddb 100%);
+			box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+			width: 100vw;
+			position: fixed;
+			top: 0;
+			left: 0;
+			z-index: 100;
+		}
+		.navbar ul {
+			list-style-type: none;
+			margin: 0;
+			padding: 0;
+			display: flex;
+			align-items: center;
+		}
+		.navbar li {
+			flex: 1;
+		}
+		.navbar a {
+		display: block;
+		color: #fff;
+		text-align: center;
+		padding: 16px 0;
+		text-decoration: none;
+		font-weight: 500;
+		transition: background 0.2s;
+		/* box-shadow removed */
+		}
+		/* .navbar a.active removed for undo */
+		.navbar a:hover {
+			background-color: #3949ab;
+			border-radius: 999px;
+			box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+			border: 2px solid #b39ddb;
+			padding: 8px 28px;
+			transition: box-shadow 0.2s, border 0.2s, padding 0.2s, background 0.2s;
+		}
+
+		.navbar .brand:hover {
+			box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+			border: 2px solid #3949ab;
+			transition: box-shadow 0.2s, border 0.2s;
+			border-radius: 24px !important;
+			padding: 8px 14px !important;
+		}
+		.navbar .brand {
+			font-size: 1.3em;
+			font-weight: bold;
+			letter-spacing: 1px;
+			color: #1a237e;
+			background: linear-gradient(90deg, #90caf9 70%, #b39ddb 100%);
+			border-radius: 24px;
+			padding: 8px 14px;
+			margin-left: 16px;
+			box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+			border: 2px solid #b39ddb;
+			flex: 2;
+			text-align: left;
+		}
+		.navbar a.login-btn {
+	background: linear-gradient(90deg, #b39ddb 70%, #90caf9 100%);
+	color: #1a237e !important;
+	border-radius: 999px;
+	border: 2px solid #b39ddb;
+	font-weight: bold;
+	box-shadow: none;
+	padding: 8px 22px;
+	margin-right: 18px;
+	min-width: 90px;
+	text-align: center;
+	font-size: 1em;
+	letter-spacing: 0.5px;
+	transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(90deg, #b39ddb 70%, #90caf9 100%);
+  color: #1a237e;
+  font-weight: bold;
+  font-size: 1.1em;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+  border: 2px solid #b39ddb;
+  transition: background 0.2s, color 0.2s;
+}
+.navbar a.login-btn:hover {
+  background: #3949ab;
+  color: #fff;
+}
+		.main-content {
+			margin-top: 80px;
+			min-height: 80vh;
+			padding: 40px;
+			display: block;
+		}
+
+/* Box-like section for the profile content */
+.profile-container {
+    max-width: 800px;
+    width: 100%;
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: center; /* Center text inside the box */
+}
+
+/* Profile container: center-aligned card for profile and histories */
+.profile-panel {
+    max-width: 1000px;
+    width: 100%;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+/* Hide sell history sections but keep purchased history visible.
+   Covers several common class/id names to avoid editing HTML. */
+.sell-history,
+.sold-history,
+.user-sell-history,
+#sell-history,
+.section-sell-history {
+    display: none !important;
+}
+
+.purchase-history,
+.purchased-history,
+#purchase-history,
+.section-purchase-history {
+    display: block !important;
+    width: 100%;
+}
+		footer {
+			font-family: 'Times New Roman', Times, serif;
+			background: linear-gradient(90deg, #90caf9 70%, #b39ddb 100%);
+			color: #1a237e;
+			text-align: center;
+			padding: 10px 0 6px 0;
+			position: relative;
+			bottom: 0;
+			width: 100vw;
+			font-size: 1em;
+			letter-spacing: 1px;
+		}
+
+/* Style for list items */
+.list-item {
+    width: auto;
+    max-width: none;
+    background: none;
+    border-radius: 0;
+    padding: 0;
+    box-shadow: none;
+    text-align: inherit;
+    font-size: inherit;
+    color: inherit;
+}
